@@ -1,7 +1,9 @@
 {
   "pages": [
+    "pages/login/login",
     "pages/schedule/schedule",
     "pages/schedule/add/add",
+    "pages/register/register",
     "pages/health/health",
     "pages/health/plan/plan",
     "pages/health/record/record",
