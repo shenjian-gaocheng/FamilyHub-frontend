@@ -1,0 +1,79 @@
+.page {
+  padding: 14px 14px 24px;
+  background: #f7f8fa;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.section {
+  margin-bottom: 16px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.suggest {
+  background: #e8f3ff;
+  color: #1a3f74;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.card {
+  margin-top: 10px;
+  padding: 12px;
+  background: #f9fbff;
+  border-radius: 10px;
+  border: 1px solid #d9e7ff;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.status {
+  font-size: 12px;
+  color: #1a73e8;
+}
+
+.time {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.primary {
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+}
+
+.ghost {
+  background: #f2f6ff;
+  color: #1a73e8;
+  border: 1px solid #d9e7ff;
+}

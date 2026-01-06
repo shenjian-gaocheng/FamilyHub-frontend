@@ -1,0 +1,142 @@
+.page {
+  min-height: 100vh;
+  background: #f7f8fa;
+}
+
+.hero {
+  padding: 20px 16px 12px;
+  background: linear-gradient(180deg, #d7ecff 0%, #f7f8fa 90%);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.hero-top {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #4a6fa8;
+}
+
+.section {
+  margin: 12px 16px 0;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.gauge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.gauge-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.gauge-score {
+  font-size: 14px;
+  color: #1a73e8;
+}
+
+.gauge-wrap {
+  position: relative;
+  width: 220px;
+  height: 140px;
+  margin: 0 auto;
+}
+
+.gauge-canvas {
+  width: 220px;
+  height: 140px;
+}
+
+.gauge-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  text-align: center;
+  transform: translateY(-10px);
+}
+
+.gauge-main {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.gauge-sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.gauge-legend {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 0 8px;
+}
+
+.bad {
+  color: #e54d42;
+}
+
+.mid {
+  color: #f5b400;
+}
+
+.good {
+  color: #0cb34a;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 14px 16px 24px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.card:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.card-desc {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #667788;
+  line-height: 1.5;
+}

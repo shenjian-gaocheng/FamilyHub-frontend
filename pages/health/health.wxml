@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="hero">
+    <view class="hero-top">
+      <text class="title">健康管理</text>
+      <text class="subtitle">家庭成员健康概览</text>
+    </view>
+  </view>
+
+  <view class="section gauge">
+    <view class="gauge-header">
+      <text class="gauge-title">健康评分</text>
+      <text class="gauge-score">{{healthScore}} 分</text>
+    </view>
+    <view class="gauge-wrap">
+      <canvas type="2d" id="gauge" class="gauge-canvas"></canvas>
+      <view class="gauge-text">
+        <text class="gauge-main">{{healthScore}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="grid">
+    <view class="card" bindtap="goPlan">
+      <text class="card-title">制定运动计划</text>
+    </view>
+    <view class="card" bindtap="goRecord">
+      <text class="card-title">健康记录</text>
+    </view>
+    <view class="card" bindtap="goReport">
+      <text class="card-title">体检报告管理</text>
+    </view>
+    <view class="card" bindtap="goStats">
+      <text class="card-title">健康状况统计分析</text>
+    </view>
+  </view>
+</view>

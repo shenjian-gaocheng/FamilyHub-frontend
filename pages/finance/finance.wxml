@@ -1,0 +1,31 @@
+<view class="page">
+  <view class="hero">
+    <text class="title">财务管理</text>
+  </view>
+
+  <view class="section summary">
+    <view class="row">
+      <view class="col">
+        <text class="label">本月支出</text>
+        <text class="value red">￥{{summary.out}}</text>
+      </view>
+      <view class="col">
+        <text class="label">本月收入</text>
+        <text class="value">￥{{summary.in}}</text>
+      </view>
+      <view class="col">
+        <text class="label">预算剩余</text>
+        <text class="value green">￥{{summary.budgetLeft}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="grid">
+    <view class="card" bindtap="goBills">
+      <text class="card-title">账单管理</text>
+    </view>
+    <view class="card" bindtap="goBudget">
+      <text class="card-title">预算管理</text>
+    </view>
+  </view>
+</view>

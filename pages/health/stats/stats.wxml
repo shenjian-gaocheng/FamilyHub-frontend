@@ -1,0 +1,28 @@
+<view class="page">
+  <view class="section filters">
+    <view class="row" bindtap="onMemberPick">
+      <text class="label">家庭成员</text>
+      <text class="value">{{member}}</text>
+    </view>
+    <view class="row" bindtap="onRangePick">
+      <text class="label">时间范围</text>
+      <text class="value">{{range}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="title">健康统计</text>
+    <block wx:for="{{charts}}" wx:key="id">
+      <view class="chart-card">
+        <text class="chart-title">{{item.title}}</text>
+        <text class="chart-desc">{{item.desc}}</text>
+        <view class="chart-placeholder">图表占位</view>
+      </view>
+    </block>
+  </view>
+
+  <view class="section">
+    <text class="title">AI 分析建议</text>
+    <text class="note">{{tips}}</text>
+  </view>
+</view>

@@ -1,0 +1,65 @@
+<view class="page">
+  <view class="section">
+    <view class="section-header">
+      <text class="title">本月概览 {{summary.month}}</text>
+      <view class="actions">
+        <button size="mini" class="ghost" bindtap="onImport">导入</button>
+        <button size="mini" class="primary" bindtap="onAdd">新增</button>
+      </view>
+    </view>
+    <view class="row">
+      <view class="col">
+        <text class="label">支出</text>
+        <text class="value red">￥{{summary.totalOut}}</text>
+      </view>
+      <view class="col">
+        <text class="label">收入</text>
+        <text class="value">￥{{summary.totalIn}}</text>
+      </view>
+      <view class="col">
+        <text class="label">条目</text>
+        <text class="value">{{summary.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section filter">
+    <scroll-view scroll-x class="chip-row">
+      <block wx:for="{{categories}}" wx:key="key">
+        <view class="chip {{currentCategory === item.key ? 'active' : ''}}" bindtap="onCategoryTap" data-key="{{item.key}}">{{item.label}}</view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <view class="section">
+    <text class="title">账单列表</text>
+    <block wx:for="{{filteredBills}}" wx:key="id">
+      <view class="bill" bindtap="onBillTap" data-id="{{item.id}}">
+        <view class="bill-left">
+          <view class="icon-circle">店</view>
+          <view class="bill-info">
+            <text class="bill-merchant">{{item.merchant}}</text>
+            <text class="bill-note">{{item.category}} · {{item.note}}</text>
+            <text class="bill-date">{{item.date}}</text>
+          </view>
+        </view>
+        <text class="bill-amount {{item.type === '支出' ? 'red' : 'green'}}">{{item.type === '支出' ? '-' : '+'}}￥{{item.amount}}</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="popup-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
+  <view class="popup" wx:if="{{showDetail}}">
+    <view class="popup-header">
+      <text class="popup-title">{{detail.merchant}}</text>
+      <text class="popup-amount {{detail.type === '支出' ? 'red' : 'green'}}">{{detail.type === '支出' ? '-' : '+'}}￥{{detail.amount}}</text>
+    </view>
+    <view class="popup-row">{{detail.date}} · {{detail.category}}</view>
+    <view class="popup-row">备注：{{detail.note || '无'}}</view>
+    <view class="popup-actions">
+      <button class="danger" bindtap="onDeleteDetail">删除</button>
+      <button class="primary" bindtap="onEditDetail">修改</button>
+      <button class="ghost" bindtap="closeDetail">关闭</button>
+    </view>
+  </view>
+</view>

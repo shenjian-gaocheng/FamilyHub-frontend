@@ -1,0 +1,61 @@
+<view class="page">
+  <view class="hero">
+    <view class="hero-top">
+      <text class="time-text">{{month}}月 第{{weekOfYear}}周</text>
+      <view class="hero-actions">
+        <button class="icon-btn primary" bindtap="onAdd">添加日程</button>
+      </view>
+    </view>
+    <text class="title">课程表</text>
+  </view>
+
+  <scroll-view class="date-row" scroll-x>
+    <view class="date-item" wx:for="{{dates}}" wx:key="day" bindtap="onSelectDate" data-day="{{item.day}}">
+      <text class="week">{{item.label}}</text>
+      <view class="date {{item.day === selectedDay ? 'active' : ''}}">
+        <text class="num">{{item.day}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="timeline">
+    <block wx:for="{{events}}" wx:key="id" wx:for-index="idx">
+      <view class="time-slot">
+        <text class="slot-time">{{item.start}} - {{item.end}}</text>
+      </view>
+      <view class="event-pill" bindtap="onEventTap" data-idx="{{idx}}">
+        <text class="event-title">{{item.title}}</text>
+        <text class="event-meta">{{item.location}}</text>
+        <text class="event-meta">{{item.note}}</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="popup-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
+  <view class="popup" wx:if="{{showDetail}}">
+    <view class="popup-header">
+      <text class="popup-title">{{detail.title}}</text>
+      <button class="popup-edit" bindtap="onEdit">编辑</button>
+    </view>
+    <view class="popup-row">
+      <text class="icon">🕒</text>
+      <text class="popup-text">{{detail.timeLabel}}</text>
+    </view>
+    <view class="popup-row">
+      <text class="icon">🏫</text>
+      <text class="popup-text">{{detail.location}}</text>
+    </view>
+    <view class="popup-row">
+      <text class="icon">👤</text>
+      <text class="popup-text">{{detail.teacher}}</text>
+    </view>
+    <view class="popup-row">
+      <text class="icon">📌</text>
+      <text class="popup-text">{{detail.note}}</text>
+    </view>
+    <view class="popup-actions">
+      <button class="popup-delete" bindtap="onDelete">删除</button>
+      <button class="popup-close" bindtap="closeDetail">关闭</button>
+    </view>
+  </view>
+</view>

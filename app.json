@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/schedule/schedule",
+    "pages/schedule/add/add",
+    "pages/health/health",
+    "pages/health/plan/plan",
+    "pages/health/record/record",
+    "pages/health/report/report",
+    "pages/health/stats/stats",
+    "pages/finance/finance",
+    "pages/finance/bills/bills",
+    "pages/finance/budget/budget",
+    "pages/mine/mine",
+    "pages/index/index",
+    "pages/logs/logs"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "Weixin",
+    "navigationBarBackgroundColor": "#ffffff"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#0cb34a",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/schedule/schedule",
+        "text": "事务",
+        "iconPath": "assets/tabbar/affairs.png",
+        "selectedIconPath": "assets/tabbar/affairs.png"
+      },
+      {
+        "pagePath": "pages/health/health",
+        "text": "健康",
+        "iconPath": "assets/tabbar/health.png",
+        "selectedIconPath": "assets/tabbar/health.png"
+      },
+      {
+        "pagePath": "pages/finance/finance",
+        "text": "财务",
+        "iconPath": "assets/tabbar/finance.png",
+        "selectedIconPath": "assets/tabbar/finance.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "assets/tabbar/mine.png",
+        "selectedIconPath": "assets/tabbar/mine.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

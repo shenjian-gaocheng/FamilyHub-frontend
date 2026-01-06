@@ -1,0 +1,41 @@
+<view class="page">
+  <view class="section">
+    <view class="section-header">
+      <text class="title">月度预算 {{month}}</text>
+      <button size="mini" class="primary" bindtap="onSave">保存</button>
+    </view>
+    <view class="row">
+      <view class="col">
+        <text class="label">预算</text>
+        <input class="input" type="number" value="{{budget}}" bindinput="onBudgetInput" />
+      </view>
+      <view class="col">
+        <text class="label">已用</text>
+        <text class="value red">￥{{spent}}</text>
+      </view>
+      <view class="col">
+        <text class="label">剩余</text>
+        <text class="value green">￥{{getRemain()}}</text>
+      </view>
+    </view>
+    <view class="progress">
+      <view class="bar {{spent > budget ? 'over' : ''}}" style="width: {{getBarWidth(spent, budget)}}%"></view>
+    </view>
+    <text class="note">已用 {{getPercent(spent, budget)}}%，超支时标红</text>
+  </view>
+
+  <view class="section">
+    <text class="title">分项预算</text>
+    <block wx:for="{{categories}}" wx:key="name">
+      <view class="card">
+        <view class="card-top">
+          <text class="card-title">{{item.name}}</text>
+          <text class="card-amount">￥{{item.spent}} / ￥{{item.budget}}</text>
+        </view>
+        <view class="progress mini">
+          <view class="bar {{item.spent > item.budget ? 'over' : ''}}" style="width: {{getBarWidth(item.spent, item.budget)}}%"></view>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

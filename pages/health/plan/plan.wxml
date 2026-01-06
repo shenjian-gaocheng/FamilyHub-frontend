@@ -1,0 +1,25 @@
+<view class="page">
+  <view class="section">
+    <view class="section-header">
+      <text class="title">AI 建议</text>
+      <button class="ghost" size="mini" bindtap="onSync">同步到家庭事务</button>
+    </view>
+    <view class="suggest">{{aiSuggestion}}</view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="title">我的计划</text>
+      <button class="primary" size="mini" bindtap="onAddPlan">新增计划</button>
+    </view>
+    <block wx:for="{{plans}}" wx:key="id">
+      <view class="card" bindtap="onEdit" data-id="{{item.id}}">
+        <view class="card-top">
+          <text class="card-title">{{item.title}}</text>
+          <text class="status">{{item.status}}</text>
+        </view>
+        <text class="time">{{item.time}}</text>
+      </view>
+    </block>
+  </view>
+</view>

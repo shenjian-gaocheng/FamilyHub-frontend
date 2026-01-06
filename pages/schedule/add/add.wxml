@@ -1,0 +1,42 @@
+<view class="page">
+  <view class="form">
+    <view class="field required">
+      <text class="label">日程</text>
+      <input class="input" placeholder="请输入日程标题" placeholder-class="ph" value="{{title}}" bindinput="onTitleInput" />
+    </view>
+
+    <view class="field">
+      <text class="label">描述</text>
+      <textarea class="textarea" placeholder="非必填" placeholder-class="ph" value="{{desc}}" bindinput="onDescInput" />
+    </view>
+
+    <view class="row">
+      <view class="card" bindtap="onDateChange">
+        <text class="small">日期</text>
+        <picker mode="date" value="{{date}}" bindchange="onDateChange">
+          <view class="picker-text">{{date}}</view>
+        </picker>
+        <text class="note">今天</text>
+      </view>
+      <view class="card" bindtap="onChooseSection">
+        <text class="small">时间</text>
+        <text class="picker-text">{{sectionText}}</text>
+        <text class="note">持续时间：08:00 - 08:45</text>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">重复</text>
+      <view class="radio-row">
+        <block wx:for="{{repeatOptions}}" wx:key="key">
+          <view class="radio" data-key="{{item.key}}" bindtap="onChangeRepeat">
+            <view class="dot {{repeat === item.key ? 'checked' : ''}}"></view>
+            <text class="radio-text">{{item.label}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <button class="submit" type="primary" bindtap="onSubmit">确认添加</button>
+</view>
