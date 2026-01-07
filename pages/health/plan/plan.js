@@ -19,7 +19,9 @@ Page({
   },
 
   loadPlans() {
-    const userId = wx.getStorageSync('userId');
+    const user = wx.getStorageSync('user')
+    const userId = user.id
+
     wx.request({
       url: 'http://localhost:8080/api/health/plan',
       data: { userId },
@@ -71,7 +73,9 @@ Page({
       return;
     }
 
-    const userId = wx.getStorageSync('userId');
+    const user = wx.getStorageSync('user')
+    const userId = user.id
+
 
     wx.request({
       url: `http://localhost:8080/api/health/plan/weekly?userId=${userId}`,

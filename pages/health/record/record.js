@@ -27,7 +27,9 @@ Page({
   },
 
   loadRecords() {
-    const userId = wx.getStorageSync('userId');
+    const user = wx.getStorageSync('user')
+    const userId = user.id
+
     wx.request({
       url: 'http://localhost:8080/api/health/record',
       data: { userId },
@@ -38,7 +40,9 @@ Page({
   },
 
   onSubmit() {
-    const userId = wx.getStorageSync('userId');
+    const user = wx.getStorageSync('user')
+    const userId = user.id
+
     const now = new Date().toISOString();
 
     const requests = [];

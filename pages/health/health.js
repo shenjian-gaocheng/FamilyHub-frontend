@@ -11,7 +11,8 @@ Page({
   },
 
   loadLatestRating() {
-    const userId = wx.getStorageSync('userId') || 1
+    const user = wx.getStorageSync('user')
+    const userId = user.id
 
     wx.request({
       url: 'http://localhost:8080/api/statistics/latest-rating',
