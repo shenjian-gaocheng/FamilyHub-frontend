@@ -1,3 +1,75 @@
 <view class="container">
-  <text class="title">我的</text>
+  <view class="user-info" wx:if="{{user}}">
+    <view class="avatar">{{user.role === 'admin' ? '👑' : '👤'}}</view>
+    <view class="info">
+      <text class="name">{{user.name}}</text>
+      <text class="email">{{user.email}}</text>
+      <text class="role">{{user.role === 'admin' ? '家庭管理员' : '家庭成员'}}</text>
+    </view>
+  </view>
+
+  <!-- 家庭成员管理 (仅管理员可见) -->
+  <view class="family-section" wx:if="{{user && user.role === 'admin'}}">
+    <view class="section-header">
+      <text class="section-title">家庭成员</text>
+      <text class="add-btn" bindtap="showAddMemberForm">+ 添加成员</text>
+    </view>
+
+    <view class="member-list">
+      <view wx:for="{{familyMembers}}" wx:key="id" class="member-item">
+        <view class="member-avatar">👤</view>
+        <view class="member-info">
+          <text class="member-name">{{item.name}}</text>
+          <text class="member-email">{{item.email}}</text>
+        </view>
+        <text class="member-role">{{item.role === 'admin' ? '管理员' : '成员'}}</text>
+      </view>
+
+      <view wx:if="{{familyMembers.length === 0}}" class="empty">
+        <text>暂无家庭成员</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加成员弹窗 -->
+  <view class="modal-mask" wx:if="{{showAddMember}}" bindtap="hideAddMemberForm"></view>
+  <view class="modal" wx:if="{{showAddMember}}">
+    <view class="modal-content" bindtap="">
+      <view class="modal-title">添加家庭成员</view>
+
+      <view class="input-group">
+        <text class="label">邮箱</text>
+        <view class="input-box">
+          <input class="input" placeholder="请输入成员邮箱" value="{{memberEmail}}" bindinput="onMemberEmail" />
+        </view>
+      </view>
+
+      <view class="input-group">
+        <text class="label">密码</text>
+        <view class="input-box password-box">
+          <input class="input" placeholder="请输入成员密码" password="{{!memberShowPwd}}" value="{{memberPassword}}" bindinput="onMemberPassword" />
+          <text class="eye" bindtap="toggleMemberPwd">{{memberShowPwd ? '🙈' : '👁️'}}</text>
+        </view>
+      </view>
+
+      <view class="input-group">
+        <text class="label">姓名</text>
+        <view class="input-box">
+          <input class="input" placeholder="请输入成员姓名" value="{{memberName}}" bindinput="onMemberName" />
+        </view>
+      </view>
+
+      <view class="modal-actions">
+        <button class="btn cancel" bindtap="hideAddMemberForm">取消</button>
+        <button class="btn confirm" bindtap="addMember">添加</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-list">
+    <view class="menu-item" bindtap="onLogout">
+      <text class="menu-text">退出登录</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
 </view>

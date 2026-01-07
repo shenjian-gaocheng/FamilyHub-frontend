@@ -1,15 +1,25 @@
 <view class="page">
   <view class="form">
-    <view class="input-box">
-      <input class="input" placeholder="请输入邮箱" placeholder-class="ph" value="{{email}}" bindinput="onEmail" />
+    <view class="title">用户登录</view>
+
+    <view class="input-group">
+      <text class="label">邮箱</text>
+      <view class="input-box">
+        <input class="input" placeholder="请输入邮箱" placeholder-class="ph" value="{{email}}" bindinput="onEmail" />
+      </view>
     </view>
-    <view class="input-box password-box">
-      <input class="input" placeholder="请输入密码" placeholder-class="ph" password="{{!showPwd}}" value="{{password}}" bindinput="onPassword" />
-      <text class="eye" bindtap="togglePwd">{{showPwd ? '🙈' : '👁️'}}</text>
+
+    <view class="input-group">
+      <text class="label">密码</text>
+      <view class="input-box password-box">
+        <input class="input" placeholder="请输入密码" placeholder-class="ph" password="{{!showPwd}}" value="{{password}}" bindinput="onPassword" />
+        <text class="eye" bindtap="togglePwd">{{showPwd ? '🙈' : '👁️'}}</text>
+      </view>
     </view>
+
     <view class="actions">
-      <text class="link" bindtap="goRegister">注册</text>
+      <button class="btn primary" bindtap="onLogin">登录</button>
+      <text class="link" bindtap="goRegister">创建家庭账户</text>
     </view>
-    <button class="btn" bindtap="onLogin">登录</button>
   </view>
 </view>

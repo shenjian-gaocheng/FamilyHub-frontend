@@ -1,6 +1,7 @@
 // pages/schedule/schedule.js
 Page({
   data: {
+    user: null,
     month: 1,
     weekOfYear: 1,
     selectedDay: 6,
@@ -22,6 +23,14 @@ Page({
     detail: {}
   },
   onLoad() {
+    // 获取用户信息
+    const user = wx.getStorageSync('user')
+    if (!user) {
+      wx.redirectTo({ url: '/pages/login/login' })
+      return
+    }
+    this.setData({ user })
+
     const now = new Date()
     const { month, weekOfYear } = this.calcDateInfo(now)
     this.setData({ month, weekOfYear })

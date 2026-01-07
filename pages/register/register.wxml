@@ -1,48 +1,36 @@
 <view class="page">
   <view class="form">
-    <view class="section-title">基础信息</view>
-    <view class="input-box">
-      <input class="input" placeholder="请输入邮箱" placeholder-class="ph" value="{{email}}" bindinput="onEmail" />
-    </view>
-    <view class="input-box password-box">
-      <input class="input" placeholder="请输入密码" placeholder-class="ph" password="{{!showPwd}}" value="{{password}}" bindinput="onPassword" />
-      <text class="eye" bindtap="togglePwd">{{showPwd ? '🙈' : '👁️'}}</text>
-    </view>
-    <view class="input-box">
-      <input class="input" placeholder="请输入姓名" placeholder-class="ph" value="{{name}}" bindinput="onName" />
-    </view>
+    <view class="title">创建管理员账户</view>
 
-    <view class="section-header">
-      <text class="section-title">家庭成员</text>
-      <text class="add-btn" bindtap="addMember">+ 添加成员</text>
-    </view>
-
-    <block wx:if="{{members.length === 0}}">
-      <view class="empty">暂无成员，点击右上角添加</view>
-    </block>
-
-    <block wx:for="{{members}}" wx:key="index">
-      <view class="card">
-        <view class="card-header">
-          <text class="card-title">成员 {{index + 1}}</text>
-          <text class="remove" bindtap="removeMember" data-index="{{index}}">删除</text>
-        </view>
-        <view class="input-box small">
-          <input class="input" placeholder="成员邮箱" placeholder-class="ph" value="{{item.email}}" data-index="{{index}}" data-field="email" bindinput="onMemberInput" />
-        </view>
-        <view class="input-box password-box small">
-          <input class="input" placeholder="成员密码" placeholder-class="ph" password="{{!item.showPwd}}" value="{{item.password}}" data-index="{{index}}" data-field="password" bindinput="onMemberInput" />
-          <text class="eye" bindtap="toggleMemberPwd" data-index="{{index}}">{{item.showPwd ? '🙈' : '👁️'}}</text>
-        </view>
-        <view class="input-box small">
-          <input class="input" placeholder="成员姓名" placeholder-class="ph" value="{{item.name}}" data-index="{{index}}" data-field="name" bindinput="onMemberInput" />
-        </view>
+    <view class="input-group">
+      <text class="label">邮箱</text>
+      <view class="input-box">
+        <input class="input" placeholder="请输入邮箱" placeholder-class="ph" value="{{email}}" bindinput="onEmail" />
       </view>
-    </block>
+    </view>
+
+    <view class="input-group">
+      <text class="label">密码</text>
+      <view class="input-box password-box">
+        <input class="input" placeholder="请输入密码" placeholder-class="ph" password="{{!showPwd}}" value="{{password}}" bindinput="onPassword" />
+        <text class="eye" bindtap="togglePwd">{{showPwd ? '🙈' : '👁️'}}</text>
+      </view>
+    </view>
+
+    <view class="input-group">
+      <text class="label">姓名</text>
+      <view class="input-box">
+        <input class="input" placeholder="请输入姓名" placeholder-class="ph" value="{{name}}" bindinput="onName" />
+      </view>
+    </view>
+
+    <view class="info-box">
+      <text class="info-text">💡 注册后您将成为家庭管理员，可以在"我的"页面继续添加家庭成员</text>
+    </view>
 
     <view class="actions">
+      <button class="btn primary" bindtap="onSubmit">创建账户</button>
       <text class="link" bindtap="goLogin">已有账号？去登录</text>
     </view>
-    <button class="btn" bindtap="onSubmit">注册</button>
   </view>
 </view>
