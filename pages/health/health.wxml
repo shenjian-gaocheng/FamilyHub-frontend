@@ -9,12 +9,16 @@
   <view class="section gauge">
     <view class="gauge-header">
       <text class="gauge-title">健康评分</text>
-      <text class="gauge-score">{{healthScore}} 分</text>
+      <text class="gauge-score {{scoreLevel}}">
+        {{healthScore}} 分
+      </text>
     </view>
+
     <view class="gauge-wrap">
       <canvas type="2d" id="gauge" class="gauge-canvas"></canvas>
       <view class="gauge-text">
         <text class="gauge-main">{{healthScore}}</text>
+        <text class="gauge-sub">{{scoreText}}</text>
       </view>
     </view>
   </view>

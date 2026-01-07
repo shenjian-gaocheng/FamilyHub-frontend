@@ -140,3 +140,18 @@
   color: #667788;
   line-height: 1.5;
 }
+
+.gauge-score.good { color: #0cb34a; }
+.gauge-score.mid { color: #f5b400; }
+.gauge-score.bad { color: #e54d42; }
+
+.gauge-main {
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.gauge-sub {
+  font-size: 13px;
+  color: #667788;
+}
+

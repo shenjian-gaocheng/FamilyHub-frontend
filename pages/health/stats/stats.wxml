@@ -1,28 +1,71 @@
 <view class="page">
-  <view class="section filters">
-    <view class="row" bindtap="onMemberPick">
+
+<view class="section filters">
+  <picker range="{{members}}" range-key="name" bindchange="onMemberChange">
+    <view class="row">
       <text class="label">家庭成员</text>
-      <text class="value">{{member}}</text>
+      <text class="value">{{selectedMemberName}}</text>
     </view>
-    <view class="row" bindtap="onRangePick">
+  </picker>
+
+  <picker range="{{['最近7天','最近30天','最近90天']}}" bindchange="onRangeChange">
+    <view class="row">
       <text class="label">时间范围</text>
-      <text class="value">{{range}}</text>
+      <text class="value">{{rangeText}}</text>
     </view>
+  </picker>
+</view>
+
+<view class="section">
+  <text class="title">健康统计</text>
+
+  <view class="chart-card">
+    <text class="chart-title">睡眠</text>
+    <text class="chart-desc">平均睡眠 {{sleepAvg}} 小时</text>
   </view>
 
-  <view class="section">
-    <text class="title">健康统计</text>
-    <block wx:for="{{charts}}" wx:key="id">
-      <view class="chart-card">
-        <text class="chart-title">{{item.title}}</text>
-        <text class="chart-desc">{{item.desc}}</text>
-        <view class="chart-placeholder">图表占位</view>
-      </view>
-    </block>
+  <view class="chart-card">
+    <text class="chart-title">运动</text>
+    <text class="chart-desc">运动次数 {{sportCount}} 次</text>
   </view>
+</view>
 
-  <view class="section">
-    <text class="title">AI 分析建议</text>
-    <text class="note">{{tips}}</text>
-  </view>
+<view class="section">
+  <text class="title">饮食记录</text>
+  <block wx:if="{{!diets.length}}">
+    <text class="note">暂无饮食记录</text>
+  </block>
+  <block wx:for="{{diets}}" wx:key="date">
+    <view class="diet-row">
+      <text class="diet-date">{{item.date}}</text>
+      <text class="diet-content">{{item.content}}</text>
+    </view>
+  </block>
+</view>
+
+<view class="section">
+  <text class="title">体检指标对比</text>
+
+  <block wx:if="{{!indexCompare.length}}">
+    <text class="note">暂无体检数据</text>
+  </block>
+
+  <block wx:for="{{indexCompare}}" wx:key="name">
+    <view class="index-row">
+      <text class="col name">{{item.name}}</text>
+      <text class="col">{{item.current}}</text>
+      <text class="col">{{item.previous}}</text>
+      <text class="col delta">{{item.delta}}</text>
+    </view>
+  </block>
+</view>
+
+<view class="section">
+  <text class="title">AI 健康分析</text>
+  <text class="note">{{tips}}</text>
+  <button class="primary" bindtap="onGenerate">
+    生成健康分析报告
+  </button>
+</view>
+
 </view>

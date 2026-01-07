@@ -1,24 +1,73 @@
-// pages/health/record/record.js
 Page({
   data: {
     dietText: '',
-    sleepHours: 8,
-    hasBand: false
+    sleepHours: 7,
+    hasBand: false,
+
+    records: []   // 历史记录
   },
+
+  onLoad() {
+    this.loadRecords();
+  },
+
   onDietInput(e) {
-    this.setData({ dietText: e.detail.value })
+    this.setData({ dietText: e.detail.value });
   },
+
   onSleepChange(e) {
-    this.setData({ sleepHours: e.detail.value })
+    this.setData({ sleepHours: e.detail.value });
   },
+
   onToggleBand() {
-    this.setData({ hasBand: !this.data.hasBand })
+    wx.showToast({
+      title: '当前暂不支持真实设备',
+      icon: 'none'
+    });
   },
+
+  loadRecords() {
+    const userId = wx.getStorageSync('userId');
+    wx.request({
+      url: 'http://localhost:8080/api/health/record',
+      data: { userId },
+      success: (res) => {
+        this.setData({ records: res.data });
+      }
+    });
+  },
+
   onSubmit() {
-    if (!this.data.dietText.trim()) {
-      wx.showToast({ title: '请填写饮食记录', icon: 'none' })
-      return
+    const userId = wx.getStorageSync('userId');
+    const now = new Date().toISOString();
+
+    const requests = [];
+
+    if (this.data.dietText) {
+      requests.push({
+        type: 'DIET',
+        content: this.data.dietText,
+        date: now
+      });
     }
-    wx.showToast({ title: '已保存（待接入）', icon: 'success' })
+
+    requests.push({
+      type: 'SLEEP',
+      content: `${this.data.sleepHours}`,
+      date: now
+    });
+
+    requests.forEach(record => {
+      wx.request({
+        url: `http://localhost:8080/api/health/record?userId=${userId}`,
+        method: 'POST',
+        header: { 'content-type': 'application/json' },
+        data: record
+      });
+    });
+
+    wx.showToast({ title: '记录成功', icon: 'success' });
+    this.setData({ dietText: '' });
+    this.loadRecords();
   }
-})
+});

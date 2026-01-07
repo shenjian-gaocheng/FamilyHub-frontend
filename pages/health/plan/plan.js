@@ -1,21 +1,115 @@
-// pages/health/plan/plan.js
 Page({
   data: {
-    aiSuggestion: '根据你的日程与健康档案，推荐本周 3 次有氧 + 2 次力量，每次 45 分钟。',
-    plans: [
-      { id: 1, title: '周二晚 跑步 5km', time: '20:00 - 20:50', status: '待执行' },
-      { id: 2, title: '周四 晨练 HIIT', time: '07:30 - 08:10', status: '已安排' },
-      { id: 3, title: '周六 力量训练', time: '16:00 - 17:00', status: '草稿' }
-    ]
+    aiSuggestion: '建议每周保持 3 次以上规律运动',
+
+    plans: [],
+
+    showForm: false,
+
+    title: '',
+    weekOptions: ['周一','周二','周三','周四','周五','周六','周日'],
+    weekIndex: 0,
+    startTime: '',
+    endTime: '',
+    weeks: 1
   },
+
+  onLoad() {
+    this.loadPlans();
+  },
+
+  loadPlans() {
+    const userId = wx.getStorageSync('userId');
+    wx.request({
+      url: 'http://localhost:8080/api/health/plan',
+      data: { userId },
+      success: (res) => {
+        this.setData({ plans: res.data });
+      }
+    });
+  },
+
   onAddPlan() {
-    wx.showToast({ title: '新增计划（待接入）', icon: 'none' })
+    this.setData({ showForm: true });
   },
-  onEdit(e) {
-    const { id } = e.currentTarget.dataset
-    wx.showToast({ title: `编辑 ${id}（待接入）`, icon: 'none' })
+
+  onCancel() {
+    this.setData({
+      showForm: false,
+      title: '',
+      startTime: '',
+      endTime: '',
+      weeks: 1,
+      weekIndex: 0
+    });
   },
-  onSync() {
-    wx.showToast({ title: '已同步到家庭事务（占位）', icon: 'success' })
+
+  onTitleInput(e) {
+    this.setData({ title: e.detail.value });
+  },
+
+  onWeekChange(e) {
+    this.setData({ weekIndex: e.detail.value });
+  },
+
+  onStartTimeChange(e) {
+    this.setData({ startTime: e.detail.value });
+  },
+
+  onEndTimeChange(e) {
+    this.setData({ endTime: e.detail.value });
+  },
+
+  onWeeksInput(e) {
+    this.setData({ weeks: e.detail.value });
+  },
+
+  onSubmit() {
+    const { title, weekIndex, startTime, endTime, weeks } = this.data;
+    if (!title || !startTime || !endTime || weeks <= 0) {
+      wx.showToast({ title: '请填写完整', icon: 'none' });
+      return;
+    }
+
+    const userId = wx.getStorageSync('userId');
+
+    wx.request({
+      url: `http://localhost:8080/api/health/plan/weekly?userId=${userId}`,
+      method: 'POST',
+      data: {
+        title,
+        weekDay: weekIndex + 1,
+        startTime,
+        endTime,
+        weeks
+      },
+      header: { 'content-type': 'application/json' },
+      success: () => {
+        wx.showToast({ title: '生成成功', icon: 'success' });
+        this.onCancel();
+        this.loadPlans();
+      }
+    });
+  },
+
+  // ✅ 新增：删除计划
+  onDeletePlan(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这个运动计划吗？',
+      success: (res) => {
+        if (res.confirm) {
+          wx.request({
+            url: `http://localhost:8080/api/health/plan/${id}`,
+            method: 'DELETE',
+            success: () => {
+              wx.showToast({ title: '已删除', icon: 'success' });
+              this.loadPlans();
+            }
+          });
+        }
+      }
+    });
   }
-})
+});

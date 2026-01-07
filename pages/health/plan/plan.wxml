@@ -1,25 +1,84 @@
 <view class="page">
-  <view class="section">
-    <view class="section-header">
-      <text class="title">AI 建议</text>
-      <button class="ghost" size="mini" bindtap="onSync">同步到家庭事务</button>
-    </view>
-    <view class="suggest">{{aiSuggestion}}</view>
+
+<!-- AI 建议 -->
+<view class="section">
+  <view class="section-header">
+    <text class="title">AI 建议</text>
+  </view>
+  <view class="suggest">{{aiSuggestion}}</view>
+</view>
+
+<!-- 我的计划 -->
+<view class="section">
+  <view class="section-header">
+    <text class="title">我的运动计划</text>
+    <button class="primary" size="mini" bindtap="onAddPlan">新增计划</button>
   </view>
 
-  <view class="section">
-    <view class="section-header">
-      <text class="title">我的计划</text>
-      <button class="primary" size="mini" bindtap="onAddPlan">新增计划</button>
-    </view>
-    <block wx:for="{{plans}}" wx:key="id">
-      <view class="card" bindtap="onEdit" data-id="{{item.id}}">
-        <view class="card-top">
-          <text class="card-title">{{item.title}}</text>
-          <text class="status">{{item.status}}</text>
+  <block wx:for="{{plans}}" wx:key="id">
+    <view class="card">
+      <view class="card-top">
+        <view>
+          <text class="card-title">{{item.title}}\n</text>
+          <text class="time">{{item.time}}</text>
         </view>
-        <text class="time">{{item.time}}</text>
+
+        <view class="right">
+          <text class="status">{{item.status}}</text>
+          <button
+            class="delete"
+            size="mini"
+            data-id="{{item.id}}"
+            bindtap="onDeletePlan"
+          >删除</button>
+        </view>
       </view>
-    </block>
+    </view>
+  </block>
+</view>
+
+<!-- 遮罩 -->
+<view wx:if="{{showForm}}" class="mask" bindtap="onCancel"></view>
+
+<!-- 弹窗表单 -->
+<view wx:if="{{showForm}}" class="modal">
+  <view class="modal-title">新增运动计划</view>
+
+  <view class="form-item">
+    <text class="label">计划名称</text>
+    <input class="input" placeholder="如：晨跑" bindinput="onTitleInput"/>
   </view>
+
+  <view class="form-item">
+    <text class="label">星期</text>
+    <picker range="{{weekOptions}}" value="{{weekIndex}}" bindchange="onWeekChange">
+      <view class="picker">{{weekOptions[weekIndex]}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">开始时间</text>
+    <picker mode="time" bindchange="onStartTimeChange">
+      <view class="picker">{{startTime || '请选择'}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">结束时间</text>
+    <picker mode="time" bindchange="onEndTimeChange">
+      <view class="picker">{{endTime || '请选择'}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">持续周数</text>
+    <input class="input" type="number" placeholder="如：4" bindinput="onWeeksInput"/>
+  </view>
+
+  <view class="modal-actions">
+    <button class="ghost" bindtap="onCancel">取消</button>
+    <button class="primary" bindtap="onSubmit">生成</button>
+  </view>
+</view>
+
 </view>

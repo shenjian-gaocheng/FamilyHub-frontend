@@ -4,18 +4,21 @@
       <text class="title">上传体检报告</text>
       <button class="primary" size="mini" bindtap="onUpload">上传文件</button>
     </view>
-    <text class="note">支持电子报告，解析关键指标并写入档案。</text>
+    <text class="note">支持 PDF 电子体检报告，自动解析关键指标</text>
   </view>
 
   <view class="section">
     <text class="title">历史报告</text>
     <block wx:for="{{uploads}}" wx:key="id">
-      <view class="card" bindtap="onView" data-id="{{item.id}}">
+      <view class="card" bindtap="onView" data-file="{{item.file}}">
         <view class="card-top">
-          <text class="card-name">{{item.name}}</text>
-          <text class="status">{{item.status}}</text>
+          <text class="card-name">{{item.time}}</text>
+          <text class="status">已解析</text>
         </view>
-        <text class="note">{{item.notes}}</text>
+        <text class="note">
+          BMI: {{item.keyIndex.BMI || '-'}}，
+          血压: {{item.keyIndex.bloodPressure || '-'}}
+        </text>
       </view>
     </block>
   </view>

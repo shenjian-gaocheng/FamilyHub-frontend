@@ -1,19 +1,126 @@
-// pages/health/stats/stats.js
+const BASE_URL = "http://localhost:8080";
+
+function formatDateTime(date) {
+  const pad = n => n < 10 ? '0' + n : n;
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} `
+       + `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 Page({
   data: {
-    member: '我',
-    range: '最近30天',
-    charts: [
-      { id: 1, title: '体重趋势', desc: '近30天体重变化', placeholder: true },
-      { id: 2, title: '睡眠时长', desc: '近30天平均睡眠 7.5h', placeholder: true },
-      { id: 3, title: '运动频率', desc: '每周 3 次运动', placeholder: true }
-    ],
-    tips: '结合健康记录与体检报告生成 AI 建议（待接入）'
+    members: [],
+    selectedMemberId: null,
+    selectedMemberName: "",
+
+    begin: "",
+    end: "",
+    rangeText: "最近30天",
+
+    sleepAvg: 0,
+    sportCount: 0,
+    diets: [],
+    indexCompare: [],
+
+    tips: ""
   },
-  onMemberPick() {
-    wx.showToast({ title: '选择成员（待接入权限）', icon: 'none' })
+
+  onLoad() {
+    this.initRange();
+    this.loadMembers();
   },
-  onRangePick() {
-    wx.showToast({ title: '选择时间范围（待接入）', icon: 'none' })
+
+  initRange() {
+    const now = new Date();
+    const begin = new Date(now.getTime() - 30 * 86400000);
+    this.setData({
+      begin: formatDateTime(begin),
+      end: formatDateTime(now)
+    });
+  },
+
+  loadMembers() {
+    const userId = wx.getStorageSync("userId") || 1;
+
+    wx.request({
+      url: `${BASE_URL}/api/family/members`,
+      data: { userId },
+      success: res => {
+        const members = res.data || [];
+        if (!members.length) return;
+
+        this.setData({
+          members,
+          selectedMemberId: members[0].id,
+          selectedMemberName: members[0].name
+        });
+        this.fetchData();
+      }
+    });
+  },
+
+  onMemberChange(e) {
+    const m = this.data.members[e.detail.value];
+    this.setData({
+      selectedMemberId: m.id,
+      selectedMemberName: m.name
+    });
+    this.fetchData();
+  },
+
+  onRangeChange(e) {
+    const daysArr = [7, 30, 90];
+    const days = daysArr[e.detail.value];
+    const now = new Date();
+    const begin = new Date(now.getTime() - days * 86400000);
+
+    this.setData({
+      begin: formatDateTime(begin),
+      end: formatDateTime(now),
+      rangeText: `最近${days}天`
+    });
+
+    this.fetchData();
+  },
+
+  fetchData() {
+    const { selectedMemberId, begin, end } = this.data;
+    if (!selectedMemberId) return;
+
+    wx.request({
+      url: `${BASE_URL}/api/statistics/data`,
+      data: {
+        userId: selectedMemberId,
+        begin,
+        end
+      },
+      success: res => {
+        const d = res.data || {};
+        this.setData({
+          sleepAvg: (d.sleepAvg || 0).toFixed(1),
+          sportCount: d.sportCount || 0,
+          diets: d.diets || [],
+          indexCompare: d.indexCompare || []
+        });
+      }
+    });
+  },
+
+  onGenerate() {
+    const { selectedMemberId, begin, end } = this.data;
+
+    wx.request({
+      url: `${BASE_URL}/api/statistics/ai-report`,
+      method: "POST",
+      data: {
+        userId: selectedMemberId,
+        begin,
+        end
+      },
+      success: res => {
+        this.setData({
+          tips: res.data.report
+        });
+      }
+    });
   }
-})
+});
