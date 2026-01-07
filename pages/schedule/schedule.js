@@ -88,27 +88,37 @@ Page({
     const user = wx.getStorageSync('user')
     
     if (user && user.id) {
-      if (!this.data.currentUserId) {
+      if (this.data.currentUserId !== user.id) {
         this.setData({ 
           currentUserId: user.id,
           viewUserId: user.id 
         })
+        this.loadFamilyMembers()
+        if (this.data.weekStartDate) {
+          this.initWeek(new Date()) 
+        }
       }
+      
       if (this.data.weekStartDate) {
         this.loadWeeklyTasks()
       }
     } else {
+      wx.redirectTo({ url: '/pages/login/login' })
     }
   },
 
   // 加载家庭成员列表
   loadFamilyMembers() {
-    const { currentUserId } = this.data
+    const user = wx.getStorageSync('user')
+    if (!user || !user.id) {
+      wx.redirectTo({ url: '/pages/login/login' })
+      return
+    }
     
     wx.request({
       url: `${API_BASE}/task/family-members`,
       method: 'GET',
-      data: { userId: currentUserId },
+      data: { userId: user.id },
       success: (res) => {
         if (res.data.code === 200) {
           const members = res.data.data || []
@@ -472,9 +482,14 @@ Page({
 
   // 添加日程
   onAdd() {
-    const { currentUserId } = this.data
+    const user = wx.getStorageSync('user')
+    if (!user || !user.id) {
+      wx.redirectTo({ url: '/pages/login/login' })
+      return
+    }
+    
     wx.navigateTo({ 
-      url: `/pages/schedule/add/add?userId=${currentUserId}` 
+      url: `/pages/schedule/add/add?userId=${user.id}` 
     })
   },
 
@@ -529,6 +544,12 @@ Page({
   onEdit() {
     const { detail, currentUserId } = this.data
     const taskId = detail.parentTaskId || detail.id
+
+    const user = wx.getStorageSync('user')
+    if (!user || !user.id) {
+      wx.redirectTo({ url: '/pages/login/login' })
+      return
+    }
     wx.navigateTo({
       url: `/pages/schedule/add/add?taskId=${taskId}&userId=${currentUserId}&mode=edit`
     })
