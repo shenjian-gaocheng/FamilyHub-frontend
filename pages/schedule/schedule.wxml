@@ -1,12 +1,17 @@
 <view class="page">
   <view class="hero">
     <view class="hero-top">
-      <text class="time-text">{{month}}月 第{{weekOfYear}}周</text>
+      <view class="user-info">
+        <text class="user-name">你好，{{user.name}}</text>
+      </view>
       <view class="hero-actions">
         <button class="icon-btn primary" bindtap="onAdd">添加日程</button>
       </view>
     </view>
-    <text class="title">课程表</text>
+    <view class="hero-bottom">
+      <text class="time-text">{{month}}月 第{{weekOfYear}}周</text>
+      <text class="title">课程表</text>
+    </view>
   </view>
 
   <scroll-view class="date-row" scroll-x>

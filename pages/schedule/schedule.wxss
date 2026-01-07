@@ -17,6 +17,20 @@
   align-items: center;
 }
 
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  font-size: 16px;
+  color: #2b5c9a;
+  font-weight: 500;
+}
+
+.hero-bottom {
+  margin-top: 10px;
+}
+
 .time-text {
   font-size: 14px;
   color: #2b5c9a;

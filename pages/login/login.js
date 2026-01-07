@@ -27,9 +27,29 @@ Page({
       wx.showToast({ title: '请输入密码', icon: 'none' })
       return
     }
-    wx.showToast({ title: '登录成功（占位）', icon: 'success' })
-    setTimeout(() => {
-      wx.switchTab({ url: '/pages/schedule/schedule' })
-    }, 600)
+
+    wx.request({
+      url: 'http://localhost:8080/api/user/login',
+      method: 'POST',
+      data: {
+        email: email,
+        password: password
+      },
+      success: (res) => {
+        if (res.data && res.data.id) {
+          wx.showToast({ title: '登录成功', icon: 'success' })
+          wx.setStorageSync('user', res.data)
+          setTimeout(() => {
+            wx.switchTab({ url: '/pages/schedule/schedule' })
+          }, 600)
+        } else {
+          wx.showToast({ title: '邮箱或密码错误', icon: 'none' })
+        }
+      },
+      fail: (err) => {
+        console.error('登录失败:', err)
+        wx.showToast({ title: '网络错误，请稍后重试', icon: 'none' })
+      }
+    })
   }
 })
