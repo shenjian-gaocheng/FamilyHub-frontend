@@ -89,3 +89,38 @@
   color: #667788;
   line-height: 1.5;
 }
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.recent-item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding: 10px 0;
+  border-bottom: 1px dashed #f0f2f5;
+}
+.recent-left {
+  display:flex;
+  flex-direction:column;
+}
+.recent-cat {
+  font-size:14px;
+  font-weight:600;
+}
+.recent-note {
+  font-size:12px;
+  color:#9aa6bf;
+}
+.recent-amount {
+  font-size:14px;
+  font-weight:700;
+}
+.small-note {
+  color:#9aa6bf;
+  font-size:13px;
+}

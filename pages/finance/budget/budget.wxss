@@ -101,6 +101,62 @@
   align-items: center;
 }
 
+.card-top.meta {
+  justify-content: space-between;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.card-percent {
+  font-size: 12px;
+  color: #667788;
+  background: #eef6ff;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.picker.small {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e1e4eb;
+  background: #fff;
+  min-width: 40%;
+  text-align: left;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 18px;
+  color: #fff;
+  font-weight: 600;
+  min-width: 80px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.progress .bar {
+  height: 100%;
+  background: linear-gradient(90deg,#1a73e8,#66a3ff);
+}
+
+.card {
+  margin-top: 10px;
+  padding: 12px;
+  background: linear-gradient(180deg,#fbfdff,#ffffff);
+  border-radius: 12px;
+  border: 1px solid #e6f0ff;
+}
+
+.card-percent {
+  font-size: 12px;
+  color: #1a1a1a;
+  background: rgba(255,255,255,0.6);
+  padding: 6px 10px;
+  border-radius: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
 .card-title {
   font-size: 14px;
   font-weight: 600;

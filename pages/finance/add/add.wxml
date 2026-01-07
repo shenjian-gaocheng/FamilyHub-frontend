@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="header">
+    <text class="title">新增账单</text>
+  </view>
+
+  <view class="type-toggle">
+    <button class="toggle-btn {{type === '支出' ? 'active' : ''}}" data-type="支出" bindtap="setType">支出</button>
+    <button class="toggle-btn {{type === '收入' ? 'active' : ''}}" data-type="收入" bindtap="setType">收入</button>
+  </view>
+
+  <view class="amount-row">
+    <text class="currency">￥</text>
+    <input class="amount-input" type="number" placeholder="0.00" value="{{amount}}" bindinput="onAmountInput" />
+  </view>
+
+  <view class="form-row">
+    <text class="label">类别</text>
+    <picker mode="selector" range="{{categoriesList}}" value="{{categoryIndex}}" bindchange="onCategoryPick">
+      <view class="picker">{{categoriesList[categoryIndex] || '请选择类别'}}</view>
+    </picker>
+  </view>
+
+  <view class="form-row date-row">
+    <view class="date-col">
+      <text class="label">日期</text>
+      <picker mode="date" start="2000-01-01" end="2100-12-31" value="{{date}}" bindchange="onDateChange">
+        <view class="picker">{{date || '选择日期'}}</view>
+      </picker>
+    </view>
+    <view class="date-col">
+      <text class="label">时间</text>
+      <picker mode="time" value="{{time}}" bindchange="onTimeChange">
+        <view class="picker">{{time || '选择时间'}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="form-row">
+    <text class="label">备注</text>
+    <input class="input" placeholder="备注 (可选)" value="{{content}}" bindinput="onContentInput" />
+  </view>
+
+  <button class="submit" bindtap="onSubmit">提交</button>
+</view>
+
+

@@ -11,6 +11,7 @@
     "pages/health/stats/stats",
     "pages/finance/finance",
     "pages/finance/bills/bills",
+    "pages/finance/add/add",
     "pages/finance/budget/budget",
     "pages/mine/mine",
     "pages/index/index",

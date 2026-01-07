@@ -2,30 +2,102 @@
 Page({
   data: {
     summary: {
-      month: '2026-01',
-      totalOut: 3200,
-      totalIn: 8500,
-      count: 12
+      month: '',
+      totalOut: 0,
+      totalIn: 0,
+      count: 0
     },
     categories: [
       { key: 'all', label: '全部' },
       { key: 'out', label: '支出' },
-      { key: 'in', label: '收入' },
-      { key: 'transfer', label: '转账' },
-      { key: 'refund', label: '退款' }
+      { key: 'in', label: '收入' }
     ],
     currentCategory: 'all',
-    bills: [
-      { id: 1, type: '支出', category: '餐饮', amount: 68, date: '2026-01-05', note: '午餐', merchant: '公司食堂' },
-      { id: 2, type: '支出', category: '出行', amount: 42, date: '2026-01-05', note: '地铁公交', merchant: '交通卡' },
-      { id: 3, type: '收入', category: '工资', amount: 8500, date: '2026-01-01', note: '1月工资', merchant: '公司' }
-    ],
+    bills: [],
     filteredBills: [],
     showDetail: false,
     detail: {}
   },
   onShow() {
-    this.applyFilter(this.data.currentCategory)
+    const user = wx.getStorageSync('user')
+    if (!user) {
+      wx.redirectTo({ url: '/pages/login/login' })
+      return
+    }
+    this.setData({ user })
+    this.fetchSummary()
+    this.fetchBills()
+  },
+  getMonthRange() {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = (now.getMonth() + 1).toString().padStart(2, '0')
+    const begin = `${year}-${month}-01T00:00:00`
+    const end = `${year}-${month}-31T23:59:59`
+    return { begin, end }
+  },
+  fetchSummary() {
+    const user = this.data.user
+    if (!user) return
+    const { begin, end } = this.getMonthRange()
+    wx.request({
+      url: 'http://localhost:8080/api/finance/summary',
+      method: 'GET',
+      data: { userId: user.id, begin, end, scope: 'family' },
+      success: (res) => {
+        if (res.data) {
+          const d = res.data
+          const { formatCurrency } = require('../../../utils/util')
+          this.setData({
+            summary: {
+              month: (new Date()).getFullYear() + '-' + ((new Date()).getMonth() + 1).toString().padStart(2, '0'),
+              totalOut: formatCurrency(d.totalOut || 0),
+              totalIn: formatCurrency(d.totalIn || 0),
+              count: (d.dailyTrend || []).length
+            }
+          })
+        }
+      },
+      fail: () => {
+        wx.showToast({ title: '获取汇总失败', icon: 'none' })
+      }
+    })
+  },
+  fetchBills() {
+    const user = this.data.user
+    if (!user) return
+    const { begin, end } = this.getMonthRange()
+    wx.request({
+      url: 'http://localhost:8080/api/finance/bills',
+      method: 'GET',
+      data: { userId: user.id, begin, end, scope: 'family' },
+      success: (res) => {
+        if (Array.isArray(res.data)) {
+          // API returns list of { bill, items }
+          const flat = []
+          res.data.forEach(entry => {
+            const bill = entry.bill || {}
+            const items = entry.items || []
+            items.forEach(it => {
+              flat.push({
+                id: it.id,
+                type: bill.type || '支出',
+                category: it.category || '其他',
+                amount: it.price || 0,
+                date: it.time ? it.time.split('T')[0] : (bill.beginDate ? bill.beginDate.split('T')[0] : ''),
+                note: it.content || '',
+                merchant: ''
+              })
+            })
+          })
+          this.setData({ bills: flat })
+          this.applyFilter(this.data.currentCategory)
+        }
+      },
+      fail: () => {
+        wx.showToast({ title: '获取账单失败', icon: 'none' })
+      }
+    })
   },
   applyFilter(key) {
     const list = this.data.bills.filter(item => {
@@ -43,10 +115,18 @@ Page({
     this.applyFilter(key)
   },
   onAdd() {
-    wx.showToast({ title: '新增账单（待接入）', icon: 'none' })
+    // navigate to add page (implement separately) or open a modal
+    wx.navigateTo({
+      url: '/pages/finance/add/add',
+      success: () => {},
+      fail: (err) => {
+        console.error('navigateTo add failed', err)
+        wx.showToast({ title: '无法打开新增页面，请重启小程序', icon: 'none' })
+      }
+    })
   },
   onImport() {
-    wx.showToast({ title: '导入账单（待接入）', icon: 'none' })
+    wx.showToast({ title: '导入账单（待实现）', icon: 'none' })
   },
   onBillTap(e) {
     const { id } = e.currentTarget.dataset
@@ -58,10 +138,27 @@ Page({
     this.setData({ showDetail: false })
   },
   onEditDetail() {
-    wx.showToast({ title: '修改账单（待接入）', icon: 'none' })
+    wx.showToast({ title: '修改账单（待实现）', icon: 'none' })
   },
   onDeleteDetail() {
-    wx.showToast({ title: '删除账单（待接入）', icon: 'none' })
-    this.closeDetail()
+    const detail = this.data.detail
+    if (!detail || !detail.id) return
+    wx.request({
+      url: `http://localhost:8080/api/finance/bills/${detail.id}`,
+      method: 'DELETE',
+      success: (res) => {
+        if (res.data && res.data.ok) {
+          wx.showToast({ title: '删除成功', icon: 'success' })
+          this.fetchBills()
+        } else {
+          wx.showToast({ title: '删除失败', icon: 'none' })
+        }
+        this.closeDetail()
+      },
+      fail: () => {
+        wx.showToast({ title: '删除请求失败', icon: 'none' })
+        this.closeDetail()
+      }
+    })
   }
 })
