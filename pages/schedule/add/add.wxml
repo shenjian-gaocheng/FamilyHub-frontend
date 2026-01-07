@@ -1,42 +1,241 @@
 <view class="page">
-  <view class="form">
-    <view class="field required">
-      <text class="label">日程</text>
-      <input class="input" placeholder="请输入日程标题" placeholder-class="ph" value="{{title}}" bindinput="onTitleInput" />
-    </view>
-
-    <view class="field">
-      <text class="label">描述</text>
-      <textarea class="textarea" placeholder="非必填" placeholder-class="ph" value="{{desc}}" bindinput="onDescInput" />
-    </view>
-
-    <view class="row">
-      <view class="card" bindtap="onDateChange">
-        <text class="small">日期</text>
-        <picker mode="date" value="{{date}}" bindchange="onDateChange">
-          <view class="picker-text">{{date}}</view>
-        </picker>
-        <text class="note">今天</text>
+  <scroll-view class="form-scroll" scroll-y>
+    <view class="form">
+      <!-- 冲突提示 -->
+      <view class="conflict-tip" wx:if="{{conflictInfo}}">
+        <text class="conflict-icon">⚠️</text>
+        <text class="conflict-text">{{conflictInfo}}</text>
       </view>
-      <view class="card" bindtap="onChooseSection">
-        <text class="small">时间</text>
-        <text class="picker-text">{{sectionText}}</text>
-        <text class="note">持续时间：08:00 - 08:45</text>
+      
+      <!-- 标题 -->
+      <view class="field required">
+        <text class="label">日程标题</text>
+        <input class="input" placeholder="请输入日程标题" placeholder-class="ph" value="{{title}}" bindinput="onTitleInput" />
       </view>
-    </view>
 
-    <view class="field">
-      <text class="label">重复</text>
-      <view class="radio-row">
-        <block wx:for="{{repeatOptions}}" wx:key="key">
-          <view class="radio" data-key="{{item.key}}" bindtap="onChangeRepeat">
-            <view class="dot {{repeat === item.key ? 'checked' : ''}}"></view>
-            <text class="radio-text">{{item.label}}</text>
+      <!-- 描述 -->
+      <view class="field">
+        <text class="label">描述</text>
+        <textarea class="textarea" placeholder="选填，输入日程描述" placeholder-class="ph" value="{{content}}" bindinput="onContentInput" />
+      </view>
+
+      <!-- 类型选择 -->
+      <view class="field">
+        <text class="label">类型</text>
+        <view class="type-grid">
+          <view class="type-item {{type === item.key ? 'active' : ''}}" 
+                wx:for="{{typeOptions}}" 
+                wx:key="key"
+                data-key="{{item.key}}"
+                bindtap="onTypeChange">
+            <view class="type-dot" style="background: {{item.color}}"></view>
+            <text>{{item.label}}</text>
           </view>
-        </block>
+        </view>
+      </view>
+
+      <!-- 开始时间 -->
+      <view class="field">
+        <text class="label">开始时间</text>
+        <view class="time-row">
+          <picker mode="date" value="{{beginDate}}" start="{{getTodayDate()}}" bindchange="onBeginDateChange">
+            <view class="time-picker">
+              <text class="time-value">{{beginDate}}</text>
+            </view>
+          </picker>
+          <picker mode="time" value="{{beginTime}}" bindchange="onBeginTimeChange">
+            <view class="time-picker">
+              <text class="time-value">{{beginTime}}</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <!-- 结束时间 -->
+      <view class="field">
+        <text class="label">结束时间</text>
+        <view class="time-row">
+          <picker mode="date" value="{{endDate}}" start="{{beginDate}}" bindchange="onEndDateChange">
+            <view class="time-picker">
+              <text class="time-value">{{endDate}}</text>
+            </view>
+          </picker>
+          <picker mode="time" value="{{endTime}}" bindchange="onEndTimeChange">
+            <view class="time-picker">
+              <text class="time-value">{{endTime}}</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <!-- 参与人员 -->
+      <view class="field">
+        <text class="label">参与人员</text>
+        <view class="participant-selector" bindtap="showParticipantSelector">
+          <text class="participant-text">{{getSelectedParticipantNames()}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 状态（编辑模式） -->
+      <view class="field" wx:if="{{mode === 'edit'}}">
+        <text class="label">状态</text>
+        <view class="status-row">
+          <view class="status-item {{status === item.key ? 'active' : ''}}" 
+                wx:for="{{statusOptions}}" 
+                wx:key="key"
+                data-key="{{item.key}}"
+                bindtap="onStatusChange">
+            <text>{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 复合事务开关 -->
+      <view class="field switch-field">
+        <text class="label">复合事务</text>
+        <switch checked="{{isComposite}}" color="#4a90d9" bindchange="onCompositeChange" />
+      </view>
+
+      <!-- 子任务列表 -->
+      <view class="sub-tasks-section" wx:if="{{isComposite}}">
+        <view class="sub-tasks-header">
+          <text class="sub-tasks-title">子任务列表</text>
+          <button class="add-sub-btn" bindtap="showAddSubTask">+ 添加子任务</button>
+        </view>
+        
+        <view class="sub-task-list">
+          <view class="sub-task-item" wx:for="{{subTasks}}" wx:key="index">
+            <view class="sub-task-info">
+              <text class="sub-task-title">{{item.title}}</text>
+              <text class="sub-task-time">{{item.beginDate}} {{item.beginTime}} - {{item.endDate}} {{item.endTime}}</text>
+            </view>
+            <view class="sub-task-actions">
+              <text class="edit-btn" data-index="{{index}}" bindtap="editSubTask">编辑</text>
+              <text class="delete-btn" data-index="{{index}}" bindtap="deleteSubTask">删除</text>
+            </view>
+          </view>
+          <view class="empty-sub-tasks" wx:if="{{subTasks.length === 0}}">
+            <text>暂无子任务，点击上方按钮添加</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 重复设置 -->
+      <view class="field switch-field" wx:if="{{mode === 'add'}}">
+        <text class="label">重复任务</text>
+        <switch checked="{{isRepeat}}" color="#4a90d9" bindchange="onRepeatChange" />
+      </view>
+
+      <view class="repeat-section" wx:if="{{isRepeat && mode === 'add'}}">
+        <text class="repeat-label">重复周数: {{repeatWeeks}}周</text>
+        <slider min="1" max="50" value="{{repeatWeeks}}" show-value activeColor="#4a90d9" bindchange="onRepeatWeeksChange" />
+        <text class="repeat-hint">将在之后的{{repeatWeeks}}周同一时间创建相同任务</text>
       </view>
     </view>
+  </scroll-view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-area">
+    <button class="submit-btn" bindtap="onSubmit">
+      {{mode === 'edit' ? '保存修改' : '确认添加'}}
+    </button>
   </view>
 
-  <button class="submit" type="primary" bindtap="onSubmit">确认添加</button>
+  <!-- 参与人员选择弹窗 -->
+  <view class="popup-mask" wx:if="{{showParticipantPicker}}" bindtap="closeParticipantPicker"></view>
+  <view class="popup participant-popup" wx:if="{{showParticipantPicker}}">
+    <view class="popup-header">
+      <text class="popup-title">选择参与人员</text>
+      <button class="popup-confirm" bindtap="confirmParticipants">确定</button>
+    </view>
+    <scroll-view class="participant-list" scroll-y>
+      <view class="participant-item" 
+            wx:for="{{familyMembers}}" 
+            wx:key="userId"
+            data-user-id="{{item.userId}}"
+            bindtap="toggleParticipant">
+        <view class="participant-info">
+          <text class="participant-name">{{item.name}}</text>
+          <text class="participant-role">{{item.role}}</text>
+        </view>
+        <view class="checkbox {{utils.includes(selectedParticipants, item.userId) ? 'checked' : ''}}">
+          <text wx:if="{{utils.includes(selectedParticipants, item.userId)}}">✓</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 子任务编辑弹窗 -->
+  <view class="popup-mask" wx:if="{{showSubTaskForm}}" bindtap="closeSubTaskForm"></view>
+  <view class="popup sub-task-popup" wx:if="{{showSubTaskForm}}">
+    <view class="popup-header">
+      <text class="popup-title">{{editingSubTaskIndex >= 0 ? '编辑' : '添加'}}子任务</text>
+      <view class="popup-close" bindtap="closeSubTaskForm">×</view>
+    </view>
+    
+    <view class="sub-task-form">
+      <view class="field">
+        <text class="label">子任务标题</text>
+        <input class="input" placeholder="请输入标题" value="{{subTaskForm.title}}" bindinput="onSubTaskTitleInput" />
+      </view>
+      
+      <view class="field">
+        <text class="label">开始时间</text>
+        <view class="time-row">
+          <picker mode="date" value="{{subTaskForm.beginDate}}" bindchange="onSubTaskBeginDateChange">
+            <view class="time-picker small">{{subTaskForm.beginDate}}</view>
+          </picker>
+          <picker mode="time" value="{{subTaskForm.beginTime}}" bindchange="onSubTaskBeginTimeChange">
+            <view class="time-picker small">{{subTaskForm.beginTime}}</view>
+          </picker>
+        </view>
+      </view>
+      
+      <view class="field">
+        <text class="label">结束时间</text>
+        <view class="time-row">
+          <picker mode="date" value="{{subTaskForm.endDate}}" bindchange="onSubTaskEndDateChange">
+            <view class="time-picker small">{{subTaskForm.endDate}}</view>
+          </picker>
+          <picker mode="time" value="{{subTaskForm.endTime}}" bindchange="onSubTaskEndTimeChange">
+            <view class="time-picker small">{{subTaskForm.endTime}}</view>
+          </picker>
+        </view>
+      </view>
+      
+      <button class="save-sub-btn" bindtap="saveSubTask">保存子任务</button>
+    </view>
+  </view>
 </view>
+
+<wxs module="utils">
+module.exports = {
+  getSelectedParticipantNames: function(familyMembers, selectedParticipants) {
+    if (!familyMembers || !selectedParticipants || selectedParticipants.length === 0) {
+      return '点击选择';
+    }
+    var names = [];
+    for (var i = 0; i < familyMembers.length; i++) {
+      for (var j = 0; j < selectedParticipants.length; j++) {
+        if (familyMembers[i].userId === selectedParticipants[j]) {
+          names.push(familyMembers[i].name);
+          break;
+        }
+      }
+    }
+    return names.length > 0 ? names.join('、') : '点击选择';
+  },
+  includes: function(arr, val) {
+    if (!arr) return false;
+    return arr.indexOf(val) > -1;
+  },
+  getTodayDate: function() {
+    var d = getDate();
+    var y = d.getFullYear();
+    var m = d.getMonth() + 1;
+    var day = d.getDate();
+    return y + '-' + (m < 10 ? '0' + m : m) + '-' + (day < 10 ? '0' + day : day);
+  }
+}
+</wxs>

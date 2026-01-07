@@ -1,0 +1,94 @@
+<wxs module="tools">
+  var includes = function(array, value) {
+    return array.indexOf(value) > -1;
+  }
+  module.exports.includes = includes;
+</wxs>
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="header">
+    <view class="header-left">
+      <button class="back-btn" bindtap="onBackToWeek">‹ 返回</button>
+    </view>
+    <view class="header-right">
+      <button class="today-btn" bindtap="onGoToToday">今天</button>
+    </view>
+  </view>
+
+  <!-- 月份切换 -->
+  <view class="month-nav">
+    <view class="nav-arrow" bindtap="onPrevMonth">
+      <text>‹</text>
+    </view>
+    <text class="nav-title">{{currentYear}}年{{currentMonth}}月</text>
+    <view class="nav-arrow" bindtap="onNextMonth">
+      <text>›</text>
+    </view>
+  </view>
+
+  <!-- 星期标签 -->
+  <view class="week-header">
+    <view class="week-cell" wx:for="{{weekLabels}}" wx:key="*this">
+      <text class="{{index >= 5 ? 'weekend' : ''}}">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 日历网格 -->
+  <view class="calendar-grid">
+    <view class="day-cell {{item.isCurrentMonth ? '' : 'other-month'}} {{item.fullDate === selectedDate ? 'selected' : ''}} {{tools.includes(datesWithTasks, item.fullDate) ? 'has-task' : ''}}"
+      wx:for="{{calendarDays}}"
+      wx:key="fullDate"
+      data-full-date="{{item.fullDate}}"
+      data-is-current-month="{{item.isCurrentMonth}}"
+      bindtap="onDateTap">
+  <text class="day-num">{{item.day}}</text>
+  
+  <view class="task-dot" wx:if="{{tools.includes(datesWithTasks, item.fullDate)}}"></view>
+</view>
+  </view>
+
+  <!-- 图例 -->
+  <view class="legend">
+    <view class="legend-item">
+      <view class="legend-dot has-task"></view>
+      <text>有事务</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-dot selected"></view>
+      <text>已选中</text>
+    </view>
+  </view>
+
+  <!-- 任务列表弹窗 -->
+  <view class="popup-mask" wx:if="{{showTaskList}}" bindtap="closeTaskList"></view>
+  <view class="task-popup {{showTaskList ? 'show' : ''}}">
+    <view class="popup-header">
+      <text class="popup-title">{{selectedDate}} 的任务</text>
+      <view class="popup-close" bindtap="closeTaskList">×</view>
+    </view>
+    
+    <scroll-view class="task-list" scroll-y>
+      <block wx:if="{{dayTasks.length > 0}}">
+        <view class="task-item" 
+              wx:for="{{dayTasks}}" 
+              wx:key="id"
+              data-task-id="{{item.id}}"
+              bindtap="onTaskTap">
+          <view class="task-color" style="background: {{item.typeColor}}"></view>
+          <view class="task-info">
+            <text class="task-title">{{item.title}}</text>
+            <text class="task-time">{{item.beginTime}} - {{item.endTime}}</text>
+          </view>
+          <view class="task-status {{item.status === 'DONE' ? 'done' : ''}}">
+            {{item.status === 'DONE' ? '✓' : ''}}
+          </view>
+        </view>
+      </block>
+      <view class="empty-tip" wx:else>
+        <text>暂无任务</text>
+      </view>
+    </scroll-view>
+    
+    <button class="add-task-btn" bindtap="onAddTask">+ 添加任务</button>
+  </view>
+</view>

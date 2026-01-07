@@ -1,26 +1,53 @@
 .page {
   min-height: 100vh;
-  background: #f5f6f8;
-  padding: 12px 12px 24px;
-  box-sizing: border-box;
+  background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-scroll {
+  flex: 1;
+  padding-bottom: 100px;
 }
 
 .form {
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  padding: 16px;
 }
 
+/* 冲突提示 */
+.conflict-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.conflict-icon {
+  font-size: 18px;
+}
+
+.conflict-text {
+  flex: 1;
+  font-size: 14px;
+  color: #e65100;
+  line-height: 1.5;
+}
+
+/* 表单字段 */
 .field {
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .label {
-  font-size: 14px;
-  color: #111;
-  margin-bottom: 6px;
   display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a3a5c;
+  margin-bottom: 8px;
 }
 
 .required .label::after {
@@ -31,90 +58,435 @@
 
 .input {
   width: 100%;
-  height: 44px;
-  padding: 0 10px;
-  background: #f7f8fa;
-  border-radius: 8px;
-  font-size: 14px;
+  height: 48px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #1a3a5c;
   box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #4a90d9;
 }
 
 .textarea {
   width: 100%;
-  min-height: 80px;
-  padding: 8px 10px;
-  background: #f7f8fa;
-  border-radius: 8px;
-  font-size: 14px;
+  min-height: 100px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #1a3a5c;
   box-sizing: border-box;
 }
 
 .ph {
-  color: #b2b2b2;
+  color: #a0b4c8;
 }
 
-.row {
+/* 类型选择 */
+.type-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  margin-bottom: 14px;
 }
 
-.card {
-  background: #f7f8fa;
-  border-radius: 10px;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-.small {
-  font-size: 12px;
-  color: #888;
-}
-
-.picker-text {
-  margin: 4px 0;
-  font-size: 15px;
-  color: #1a73e8;
-}
-
-.note {
-  font-size: 12px;
-  color: #999;
-}
-
-.radio-row {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-}
-
-.radio {
+.type-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  padding: 10px 8px;
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #5a7a9a;
+  transition: all 0.2s;
 }
 
-.dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid #c8c8c8;
-  box-sizing: border-box;
+.type-item.active {
+  border-color: #4a90d9;
+  background: #e8f4fd;
+  color: #2b6cb0;
 }
 
-.checked {
-  border-color: #1a73e8;
-  background: radial-gradient(circle, #1a73e8 60%, transparent 60%);
+.type-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
 }
 
-.radio-text {
+/* 时间选择 */
+.time-row {
+  display: flex;
+  gap: 12px;
+}
+
+.time-picker {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+}
+
+.time-picker.small {
+  padding: 10px 12px;
   font-size: 14px;
-  color: #444;
+  color: #1a3a5c;
 }
 
-.submit {
-  margin-top: 18px;
-  background: #1a73e8;
+.time-icon {
+  font-size: 16px;
+}
+
+.time-value {
+  font-size: 15px;
+  color: #1a3a5c;
+}
+
+/* 参与人员选择 */
+.participant-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+}
+
+.participant-text {
+  font-size: 15px;
+  color: #5a7a9a;
+}
+
+.arrow {
+  font-size: 20px;
+  color: #a0b4c8;
+}
+
+/* 状态选择 */
+.status-row {
+  display: flex;
+  gap: 12px;
+}
+
+.status-item {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #5a7a9a;
+  transition: all 0.2s;
+}
+
+.status-item.active {
+  border-color: #4a90d9;
+  background: #4a90d9;
+  color: #fff;
+}
+
+/* Switch字段 */
+.switch-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+}
+
+.switch-field .label {
+  margin-bottom: 0;
+}
+
+/* 子任务区域 */
+.sub-tasks-section {
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.sub-tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sub-tasks-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a3a5c;
+}
+
+.add-sub-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #4a90d9;
+  background: #e8f4fd;
   border: none;
+  border-radius: 14px;
+  line-height: 1.2;
+}
+
+.sub-task-list {
+  border-top: 1px solid #f0f4f8;
+  padding-top: 12px;
+}
+
+.sub-task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.sub-task-info {
+  flex: 1;
+}
+
+.sub-task-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a3a5c;
+  margin-bottom: 4px;
+}
+
+.sub-task-time {
+  font-size: 12px;
+  color: #8aa4c8;
+}
+
+.sub-task-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.edit-btn {
+  font-size: 13px;
+  color: #4a90d9;
+}
+
+.delete-btn {
+  font-size: 13px;
+  color: #e54d42;
+}
+
+.empty-sub-tasks {
+  text-align: center;
+  padding: 20px;
+  color: #a0b4c8;
+  font-size: 13px;
+}
+
+/* 重复设置 */
+.repeat-section {
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.repeat-label {
+  display: block;
+  font-size: 14px;
+  color: #1a3a5c;
+  margin-bottom: 12px;
+}
+
+.repeat-hint {
+  display: block;
+  font-size: 12px;
+  color: #8aa4c8;
+  margin-top: 8px;
+}
+
+/* 提交按钮区域 */
+.submit-area {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #4a90d9 0%, #2b6cb0 100%);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(43, 108, 176, 0.3);
+}
+
+.submit-btn:active {
+  opacity: 0.9;
+}
+
+/* 弹窗 */
+.popup-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+}
+
+.popup {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  z-index: 100;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #f0f4f8;
+}
+
+.popup-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a3a5c;
+}
+
+.popup-confirm {
+  padding: 6px 16px;
+  font-size: 14px;
+  color: #fff;
+  background: #4a90d9;
+  border: none;
+  border-radius: 16px;
+  line-height: 1.2;
+}
+
+.popup-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #8aa4c8;
+  background: #f5f7fa;
+  border-radius: 50%;
+}
+
+/* 参与人员列表 */
+.participant-list {
+  flex: 1;
+  padding: 12px 20px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  box-sizing: border-box; 
+  width: 100%;
+}
+
+.participant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  background: #f8fafc;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.participant-item:active {
+  background: #f0f4f8;
+}
+
+.participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.participant-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a3a5c;
+}
+
+.participant-role {
+  font-size: 12px;
+  color: #8aa4c8;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #d0d8e0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.checkbox.checked {
+  background: #4a90d9;
+  border-color: #4a90d9;
+}
+
+/* 子任务表单弹窗 */
+.sub-task-popup {
+  max-height: 80vh;
+}
+
+.sub-task-form {
+  padding: 16px 20px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+
+.save-sub-btn {
+  width: 100%;
+  padding: 14px 0;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #4a90d9 0%, #2b6cb0 100%);
+  border: none;
+  border-radius: 12px;
 }

@@ -15,7 +15,10 @@
     "pages/finance/budget/budget",
     "pages/mine/mine",
     "pages/index/index",
-    "pages/logs/logs"
+    "pages/logs/logs",
+    "pages/schedule/calendar/calendar",
+    "pages/schedule/statistics/statistics", 
+    "pages/schedule/detail/detail"
   ],
   "window": {
     "navigationBarTextStyle": "black",

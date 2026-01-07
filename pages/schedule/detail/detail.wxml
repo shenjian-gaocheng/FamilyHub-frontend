@@ -1,0 +1,137 @@
+<!-- pages/schedule/detail/detail.wxml -->
+<view class="page">
+  <!-- 头部 -->
+  <view class="header" style="background: {{task.typeColor}};">
+    <view class="header-content">
+      <view class="type-badge">{{task.typeName}}</view>
+      <text class="task-title">{{task.title}}</text>
+      <view class="status-badge {{task.status}}">{{task.statusText}}</view>
+    </view>
+  </view>
+  
+  <!-- 主要内容 -->
+  <scroll-view class="content" scroll-y>
+    <!-- 时间信息 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="icon"></text>
+        <text>时间安排</text>
+      </view>
+      <view class="time-info">
+        <view class="time-row">
+          <text class="time-label">开始</text>
+          <text class="time-value">{{task.beginTimeDisplay}}</text>
+        </view>
+        <view class="time-row">
+          <text class="time-label">结束</text>
+          <text class="time-value">{{task.endTimeDisplay}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 描述 -->
+    <view class="section" wx:if="{{task.content}}">
+      <view class="section-title">
+        <text class="icon"></text>
+        <text>描述</text>
+      </view>
+      <view class="desc-content">
+        <text>{{task.content}}</text>
+      </view>
+    </view>
+    
+    <!-- 参与人员 -->
+    <view class="section" wx:if="{{task.participants && task.participants.length > 0}}">
+      <view class="section-title">
+        <text class="icon"></text>
+        <text>参与人员</text>
+      </view>
+      <view class="participants-list">
+        <view class="participant-item" wx:for="{{task.participants}}" wx:key="userId">
+          <view class="participant-avatar" style="background: {{task.typeColor}};">
+            {{item.name[0]}}
+          </view>
+          <view class="participant-info">
+            <text class="participant-name">{{item.name}}</text>
+            <text class="participant-role">{{item.role}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 复合任务进度 -->
+    <view class="section" wx:if="{{task.isComposite}}">
+      <view class="section-title">
+        <text class="icon"></text>
+        <text>任务进度</text>
+        <text class="progress-text">{{progress}}%</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="{{ 'width:' + progress + '%; background:' + task.typeColor }}"></view>
+      </view>
+    </view>
+    
+    <!-- 子任务列表 -->
+    <view class="section" wx:if="{{task.isComposite && subTasks.length > 0}}">
+      <view class="section-title">
+        <text class="icon"></text>
+        <text>子任务</text>
+        <text class="sub-count">{{subTasks.length}}项</text>
+      </view>
+      <view class="subtasks-list">
+        <view class="subtask-item {{item.isCompleted ? 'completed' : ''}}" 
+              wx:for="{{subTasks}}" 
+              wx:key="id"
+              bindtap="onToggleSubTaskStatus"
+              data-sub-task-id="{{item.id}}">
+          <view class="subtask-checkbox">
+            <view class="checkbox {{item.isCompleted ? 'checked' : ''}}">
+              <text wx:if="{{item.isCompleted}}">✓</text>
+            </view>
+          </view>
+          <view class="subtask-content">
+            <text class="subtask-title">{{item.title}}</text>
+            <text class="subtask-time">{{item.beginTimeDisplay}} - {{item.endTimeDisplay}}</text>
+          </view>
+          <view class="subtask-status {{item.status}}">
+            {{item.statusText}}
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 操作按钮 -->
+    <view class="actions-section">
+      <button class="action-btn toggle-btn" bindtap="onToggleStatus">
+        <text>{{task.isCompleted ? '标记为未完成' : '标记为已完成'}}</text>
+      </button>
+      <button class="action-btn edit-btn" bindtap="onEdit">
+        <text class="action-icon"></text>
+        <text>编辑任务</text>
+      </button>
+      <button class="action-btn delete-btn" bindtap="onDelete">
+        <text class="action-icon"></text>
+        <text>删除任务</text>
+      </button>
+    </view>
+  </scroll-view>
+  
+  <!-- 删除确认弹窗 -->
+  <view class="modal-mask" wx:if="{{showDeleteModal}}" bindtap="closeDeleteModal"></view>
+  <view class="modal" wx:if="{{showDeleteModal}}">
+    <view class="modal-header">
+      <text class="modal-title">确认删除</text>
+    </view>
+    <view class="modal-body">
+      <text class="modal-text">{{isRepeatTask ? '这是一个重复任务，请选择删除方式：' : '确定要删除此任务吗？'}}</text>
+    </view>
+    <view class="modal-actions" wx:if="{{isRepeatTask}}">
+      <button class="modal-btn secondary" data-delete-all="false" bindtap="confirmDelete">仅删除本次</button>
+      <button class="modal-btn danger" data-delete-all="true" bindtap="confirmDelete">删除全部</button>
+    </view>
+    <view class="modal-actions" wx:else>
+      <button class="modal-btn secondary" bindtap="closeDeleteModal">取消</button>
+      <button class="modal-btn danger" data-delete-all="false" bindtap="confirmDelete">确认删除</button>
+    </view>
+  </view>
+</view>

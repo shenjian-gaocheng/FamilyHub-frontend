@@ -1,7 +1,6 @@
 {
-  "navigationBarTitleText": "事务管理",
+  "navigationBarTitleText": "日历",
   "navigationBarBackgroundColor": "#d4e9ff",
   "navigationBarTextStyle": "black",
-  "enablePullDownRefresh": false,
   "usingComponents": {}
 }

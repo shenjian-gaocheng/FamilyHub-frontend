@@ -1,4 +1,6 @@
 {
   "navigationBarTitleText": "添加日程",
+  "navigationBarBackgroundColor": "#f5f7fa",
+  "navigationBarTextStyle": "black",
   "usingComponents": {}
 }

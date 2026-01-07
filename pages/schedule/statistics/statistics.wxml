@@ -1,0 +1,68 @@
+<!-- pages/schedule/statistics/statistics.wxml -->
+<view class="page">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="header-title">时间统计</text>
+    <text class="header-subtitle">查看您的任务时间分布</text>
+  </view>
+  
+  <!-- 时间范围选择 -->
+  <view class="period-selector">
+    <view 
+      class="period-item {{period === item.key ? 'active' : ''}}" 
+      wx:for="{{periodOptions}}" 
+      wx:key="key"
+      data-period="{{item.key}}"
+      bindtap="onPeriodChange">
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+  
+  <!-- 饼图区域 -->
+  <view class="chart-section">
+    <view class="chart-container">
+      <canvas 
+        type="2d" 
+        id="pieCanvas" 
+        class="pie-canvas"
+        style="width: 300px; height: 300px;">
+      </canvas>
+    </view>
+    
+    <!-- 图例 -->
+    <view class="legend">
+      <view class="legend-item" wx:for="{{statistics}}" wx:key="type" wx:if="{{item.percentage > 0}}">
+        <view class="legend-color" style="background: {{item.color}};"></view>
+        <text class="legend-label">{{item.label}}</text>
+        <text class="legend-value">{{item.percentage}}%</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 详细列表 -->
+  <view class="detail-section">
+    <view class="section-title">详细统计</view>
+    <view class="detail-list">
+      <view class="detail-item" wx:for="{{statistics}}" wx:key="type">
+        <view class="detail-left">
+          <view class="detail-color" style="background: {{item.color}};"></view>
+          <text class="detail-label">{{item.label}}</text>
+        </view>
+        <view class="detail-right">
+          <text class="detail-duration">{{item.durationText}}</text>
+          <view class="detail-bar-container">
+            <view class="detail-bar" style="{{ 'width:' + item.percentage + '%; background:' + item.color }}"></view>
+          </view>
+          <text class="detail-percentage">{{item.percentage}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{statistics.length === 0}}">
+    <text class="empty-icon">📊</text>
+    <text class="empty-text">暂无统计数据</text>
+    <text class="empty-hint">开始添加任务后，这里会显示您的时间分布</text>
+  </view>
+</view>

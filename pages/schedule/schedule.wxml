@@ -1,66 +1,186 @@
+<wxs module="styleUtils">
+  var getTaskStyle = function(task) {
+    return 'top:' + task.top + 'px;' + 
+           'height:' + (task.height - 2) + 'px;' + 
+           'background-color:' + task.displayColor + ';' + 
+           'left:calc(' + task.left + '% + 3px);' + 
+           'width:calc(' + task.width + '% - 6px);';
+  }
+  var formatTime = function(str) {
+    if (!str) return '';
+    return str.replace('T', ' '); // 将 T 替换为空格
+  }
+
+  // 导出两个函数
+  module.exports = {
+    getTaskStyle: getTaskStyle,
+    formatTime: formatTime
+  }
+</wxs>
 <view class="page">
+  <!-- 顶部导航 -->
   <view class="hero">
     <view class="hero-top">
-      <view class="user-info">
-        <text class="user-name">你好，{{user.name}}</text>
-      </view>
-      <view class="hero-actions">
-        <button class="icon-btn primary" bindtap="onAdd">添加日程</button>
-      </view>
+      <text class="time-text">{{year}}/{{month}}/{{selectedDay || weekDays[0].day}}</text>
+      <text class="week-text">第{{weekOfYear}}周</text>
     </view>
-    <view class="hero-bottom">
-      <text class="time-text">{{month}}月 第{{weekOfYear}}周</text>
-      <text class="title">课程表</text>
+    <view class="hero-actions">
+      <view class="icon-btn member-btn" bindtap="toggleMemberSelector">
+        <text class="member-icon">👤</text>
+        <text class="member-label">{{getViewMemberName()}}</text>
+      </view>
+      
+      <view class="icon-btn" bindtap="onBackToToday">今天</view>
+      
+      <view class="icon-btn" bindtap="onStatistics">统计</view>
+      
+      <view class="icon-btn primary" bindtap="onAdd">+ 添加</view>
     </view>
   </view>
 
-  <scroll-view class="date-row" scroll-x>
-    <view class="date-item" wx:for="{{dates}}" wx:key="day" bindtap="onSelectDate" data-day="{{item.day}}">
-      <text class="week">{{item.label}}</text>
-      <view class="date {{item.day === selectedDay ? 'active' : ''}}">
-        <text class="num">{{item.day}}</text>
+  <!-- 周视图表格 -->
+  <view class="schedule-container" 
+        bindtouchstart="onTouchStart" 
+        bindtouchend="onTouchEnd">
+    
+    <!-- 日期行 -->
+    <view class="date-header">
+      <view class="time-column-header">
+        <text class="month-label">{{month}}月</text>
+      </view>
+      <view class="day-item" 
+            wx:for="{{weekDays}}" 
+            wx:key="day"
+            data-full-date="{{item.fullDate}}"
+            bindtap="onDateTap">
+        <text class="day-label">{{item.label}}</text>
+        <view class="day-number {{item.day === selectedDay ? 'active' : ''}} {{item.fullDate === todayDateStr ? 'today' : ''}}">
+          {{item.day}}
+        </view>
       </view>
     </view>
-  </scroll-view>
 
-  <view class="timeline">
-    <block wx:for="{{events}}" wx:key="id" wx:for-index="idx">
-      <view class="time-slot">
-        <text class="slot-time">{{item.start}} - {{item.end}}</text>
+    <!-- 时间格子 -->
+    <scroll-view class="schedule-body" scroll-y enhanced show-scrollbar="{{false}}">
+      <view class="schedule-grid">
+        <!-- 每个时间段行 -->
+        <view class="time-row" wx:for="{{timeSlots}}" wx:key="id" wx:for-item="slot">
+          <!-- 时间标签 -->
+          <view class="time-cell">
+            <text class="slot-label">{{slot.label}}</text>
+            <text class="slot-time">{{slot.start}}</text>
+            <text class="slot-time">{{slot.end}}</text>
+          </view>
+          
+          <!-- 每天的格子 -->
+          <view class="day-cell" wx:for="{{weekDays}}" wx:key="day" wx:for-item="dayItem" wx:for-index="dayIdx">
+            <!-- 检查是否有任务 -->
+            <block wx:for="{{tasks}}" wx:key="id" wx:for-item="task">
+              <block wx:if="{{task.dayIndex === dayIdx && task.startSlotId === slot.id}}">
+                <view class="task-block" 
+                  style="top: {{task.top}}px; height: {{task.height - 2}}px; background-color: {{task.displayColor}}; "
+                  data-task-id="{{task.id}}"
+                  catchtap="onEventTap">
+                  <!-- 复合事务标记放在最前面 -->
+                  <text class="task-title">
+                    <text wx:if="{{task.isSubTaskBlock}}" class="composite-icon">🔗</text>{{task.isSubTaskBlock ? task.subTaskTitle : task.title}}
+                  </text>
+                  <text class="task-location" wx:if="{{task.content && !task.isSubTaskBlock}}">{{task.content}}</text>
+                  <view class="task-status" wx:if="{{task.isCompleted}}">
+                    <text class="status-icon">✓</text>
+                  </view>
+                </view>
+              </block>
+            </block>
+          </view>
+        </view>
       </view>
-      <view class="event-pill" bindtap="onEventTap" data-idx="{{idx}}">
-        <text class="event-title">{{item.title}}</text>
-        <text class="event-meta">{{item.location}}</text>
-        <text class="event-meta">{{item.note}}</text>
-      </view>
-    </block>
+    </scroll-view>
   </view>
 
+  <!-- 周切换提示 -->
+  <view class="week-nav">
+    <view class="nav-btn" bindtap="onPrevWeek">
+      <text>‹ 上周</text>
+    </view>
+    <view class="nav-btn" bindtap="onNextWeek">
+      <text>下周 ›</text>
+    </view>
+  </view>
+
+  <!-- 家庭成员选择器弹窗 -->
+  <view class="popup-mask" wx:if="{{showMemberSelector}}" bindtap="closeMemberSelector"></view>
+  <view class="member-selector-popup" wx:if="{{showMemberSelector}}">
+    <view class="popup-header">
+      <text class="popup-title">选择查看成员</text>
+      <view class="popup-close" bindtap="closeMemberSelector">×</view>
+    </view>
+    <scroll-view class="member-list" scroll-y>
+      <view class="member-item {{viewUserId === item.userId ? 'selected' : ''}}" 
+            wx:for="{{familyMembers}}" 
+            wx:key="userId"
+            data-user-id="{{item.userId}}"
+            bindtap="onSelectMember">
+        <view class="member-avatar" style="background: {{viewUserId === item.userId ? '#4a90d9' : '#8aa4c8'}};">
+          {{item.name[0]}}
+        </view>
+        <view class="member-info">
+          <text class="member-name">{{item.name}}</text>
+          <text class="member-role">{{item.role}}</text>
+        </view>
+        <view class="member-check" wx:if="{{viewUserId === item.userId}}">
+          <text>✓</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 任务详情弹窗 -->
   <view class="popup-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
   <view class="popup" wx:if="{{showDetail}}">
     <view class="popup-header">
-      <text class="popup-title">{{detail.title}}</text>
-      <button class="popup-edit" bindtap="onEdit">编辑</button>
+      <view class="popup-title-row">
+        <view class="type-dot" style="background-color: {{detail.displayColor}}"></view>
+        <text class="popup-title">{{detail.displayTitle || detail.title}}</text>
+      </view>
+      <view class="status-badge {{detail.status === 'DONE' ? 'done' : detail.status === 'DOING' ? 'doing' : ''}}">
+        {{statusText[detail.status]}}
+      </view>
     </view>
-    <view class="popup-row">
-      <text class="icon">🕒</text>
-      <text class="popup-text">{{detail.timeLabel}}</text>
+    
+    <view class="popup-content">
+      
+      <view class="popup-row">
+        <text class="text">时间：</text>
+        <text class="popup-text">{{styleUtils.formatTime(detail.beginTime)}} - {{styleUtils.formatTime(detail.endTime)}}</text>
+      </view>
+      <view class="popup-row" wx:if="{{detail.content}}">
+        <text class="text">描述：</text>
+        <text class="popup-text">{{detail.content}}</text>
+      </view>
+      <view class="popup-row" wx:if="{{detail.participants && detail.participants.length > 0}}">
+        <text class="text">参与人员</text>
+        <text class="popup-text">
+          <block wx:for="{{detail.participants}}" wx:key="userId">
+            {{item.name}}{{index < detail.participants.length - 1 ? '、' : ''}}
+          </block>
+        </text>
+      </view>
+      <view class="popup-row" wx:if="{{detail.isComposite}}">
+        <text class="icon">🔗</text>
+        <text class="popup-text">复合任务 (进度: {{detail.progress || 0}}%)</text>
+      </view>
     </view>
-    <view class="popup-row">
-      <text class="icon">🏫</text>
-      <text class="popup-text">{{detail.location}}</text>
-    </view>
-    <view class="popup-row">
-      <text class="icon">👤</text>
-      <text class="popup-text">{{detail.teacher}}</text>
-    </view>
-    <view class="popup-row">
-      <text class="icon">📌</text>
-      <text class="popup-text">{{detail.note}}</text>
-    </view>
+    
     <view class="popup-actions">
-      <button class="popup-delete" bindtap="onDelete">删除</button>
-      <button class="popup-close" bindtap="closeDetail">关闭</button>
+      <button class="action-btn detail-btn" bindtap="onViewDetail">详情</button>
+      <button class="action-btn edit-btn" bindtap="onEdit">编辑</button>
+      <button class="action-btn status-btn" 
+              bindtap="onToggleStatus" 
+              wx:if="{{!detail.isComposite}}">
+        {{detail.status === 'DONE' ? '标记未完成' : '标记完成'}}
+      </button>
+      <button class="action-btn delete-btn" bindtap="onDelete">删除</button>
     </view>
   </view>
 </view>
