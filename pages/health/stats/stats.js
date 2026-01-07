@@ -42,7 +42,7 @@ Page({
     const userId = wx.getStorageSync("userId") || 1;
 
     wx.request({
-      url: `${BASE_URL}/api/family/members`,
+      url: `${BASE_URL}/api/family/getmembers`,
       data: { userId },
       success: res => {
         const members = res.data || [];
