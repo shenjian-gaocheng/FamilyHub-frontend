@@ -38,7 +38,27 @@ Page({
       success: (res) => {
         if (res.data && res.data.id) {
           wx.showToast({ title: '登录成功', icon: 'success' })
-          wx.setStorageSync('user', res.data)
+          // persist returned user
+          let user = res.data || {}
+          // remove any legacy permissions cache
+          try { wx.removeStorageSync('permissions') } catch (e) {}
+          // ensure access fields exist (support snake_case & camelCase)
+          const ensureNum = (u, snake, camel) => {
+            const raw = (u[snake] !== undefined) ? u[snake] : (u[camel] !== undefined ? u[camel] : 1)
+            const n = Number(raw)
+            return Number.isNaN(n) ? 1 : n
+          }
+          user.task_access = ensureNum(user, 'task_access', 'taskAccess')
+          user.health_access = ensureNum(user, 'health_access', 'healthAccess')
+          user.finance_access = ensureNum(user, 'finance_access', 'financeAccess')
+          wx.setStorageSync('user', user)
+          // refresh custom tabbar on all open pages so icons immediately reflect permissions
+          const pages = getCurrentPages()
+          pages.forEach(p => {
+            if (typeof p.getTabBar === 'function' && p.getTabBar()) {
+              try { p.getTabBar().refresh() } catch (e) {}
+            }
+          })
           setTimeout(() => {
             wx.switchTab({ url: '/pages/schedule/schedule' })
           }, 600)

@@ -37,4 +37,5 @@
       <text class="card-title">健康状况统计分析</text>
     </view>
   </view>
+  <custom-tabbar/>
 </view>

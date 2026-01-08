@@ -11,6 +11,8 @@ App({
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
       }
     })
+    // ensure native tabBar is hidden (we use a custom tabbar component)
+    try { if (wx.hideTabBar) wx.hideTabBar() } catch (e) {}
   },
   globalData: {
     userInfo: null

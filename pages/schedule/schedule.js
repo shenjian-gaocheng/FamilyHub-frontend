@@ -72,16 +72,17 @@ Page({
     const user = wx.getStorageSync('user')
 
     if (user && user.id) {
-      this.setData({ 
+      this.setData({
         currentUserId: user.id,
         viewUserId: user.id
       })
-      
+
       this.initWeek(new Date())
       this.loadFamilyMembers()
     } else {
       wx.redirectTo({ url: '/pages/login/login' })
     }
+
   },
 
   onShow() {
@@ -105,6 +106,7 @@ Page({
     } else {
       wx.redirectTo({ url: '/pages/login/login' })
     }
+    // TabBar refresh is centralized (login / permission change). Removed per-page refresh to avoid conflicts.
   },
 
   // 加载家庭成员列表

@@ -3,5 +3,7 @@
   "navigationBarBackgroundColor": "#e3f1ff",
   "navigationBarTextStyle": "black",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "custom-tabbar": "/components/custom-tabbar/index"
+  }
 }

@@ -6,8 +6,16 @@ Page({
     scoreText: ''
   },
 
+  onLoad() {
+    // TabBar refresh centralized; removed per-page refresh to avoid conflicts.
+  },
+
   onReady() {
     this.loadLatestRating()
+  },
+
+  onShow() {
+    // TabBar refresh centralized; removed per-page refresh to avoid conflicts.
   },
 
   loadLatestRating() {

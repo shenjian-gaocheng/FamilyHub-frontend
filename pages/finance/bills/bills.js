@@ -91,7 +91,7 @@ Page({
             })
           })
           this.setData({ bills: flat })
-          this.applyFilter(this.data.currentCategory)
+    this.applyFilter(this.data.currentCategory)
         }
       },
       fail: () => {
@@ -157,7 +157,7 @@ Page({
       },
       fail: () => {
         wx.showToast({ title: '删除请求失败', icon: 'none' })
-        this.closeDetail()
+    this.closeDetail()
       }
     })
   }

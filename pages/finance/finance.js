@@ -12,6 +12,10 @@ Page({
     , recent: []
   },
 
+  onLoad() {
+    // TabBar refresh centralized; removed per-page refresh to avoid conflicts.
+  },
+
   onShow() {
     const user = wx.getStorageSync('user')
     if (!user) {
@@ -25,6 +29,7 @@ Page({
     this.fetchBudget(user.id, monthKey)
     this.fetchRecent(user.id)
     this.fetchTrend(user.id)
+    // TabBar refresh centralized; removed per-page refresh to avoid conflicts.
   },
 
   getMonthRange() {
@@ -69,8 +74,8 @@ Page({
           const spent = Number(d.spent || 0)
           const left = Math.max(0, budget - spent)
           this.animateNumber('summary.budgetLeft', left)
-        }
-      },
+    }
+  },
       fail: () => {
         wx.showToast({ title: '获取预算失败', icon: 'none' })
       }

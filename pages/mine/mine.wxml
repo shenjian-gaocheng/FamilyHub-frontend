@@ -1,32 +1,63 @@
 <view class="container">
-  <view class="user-info" wx:if="{{user}}">
-    <view class="avatar">{{user.role === 'admin' ? '👑' : '👤'}}</view>
-    <view class="info">
-      <text class="name">{{user.name}}</text>
-      <text class="email">{{user.email}}</text>
-      <text class="role">{{user.role === 'admin' ? '家庭管理员' : '家庭成员'}}</text>
+  <!-- top summary removed to avoid duplicate card; main user card below serves as primary display -->
+
+  <!-- Rich dashboard cards -->
+  <!-- Simplified: show admin info and family members only -->
+  <view class="panel">
+    <view class="user-card">
+      <view class="avatar-circle large">
+        <text class="avatar-text large">{{avatarInitials}}</text>
+        <view class="role-badge {{user.role === 'admin' ? 'admin' : 'member'}}">{{user.role === 'admin' ? '家庭管理员' : '家庭成员'}}</view>
+      </view>
+      <view class="user-meta">
+        <text class="card-title">{{user.name}}</text>
+        <text class="card-sub">{{user.email}}</text>
+        <text class="card-sub">家庭：{{user.familyId || '—'}}</text>
     </view>
   </view>
 
-  <!-- 家庭成员管理 (仅管理员可见) -->
   <view class="family-section" wx:if="{{user && user.role === 'admin'}}">
     <view class="section-header">
       <text class="section-title">家庭成员</text>
-      <text class="add-btn" bindtap="showAddMemberForm">+ 添加成员</text>
+      <text wx:if="{{user && user.role === 'admin'}}" class="add-btn" bindtap="showAddMemberForm">+ 添加成员</text>
     </view>
-
     <view class="member-list">
-      <view wx:for="{{familyMembers}}" wx:key="id" class="member-item">
+        <view wx:if="{{!familyLoaded}}" class="empty">
+          <text>正在加载成员...</text>
+        </view>
+        <block wx:for="{{familyMembers}}" wx:key="id">
+          <block wx:if="{{item.id !== user.id}}">
+            <view class="member-item" bindtap="onMemberTap" data-id="{{item.id}}">
         <view class="member-avatar">👤</view>
         <view class="member-info">
           <text class="member-name">{{item.name}}</text>
           <text class="member-email">{{item.email}}</text>
         </view>
+            <view class="member-controls">
         <text class="member-role">{{item.role === 'admin' ? '管理员' : '成员'}}</text>
+                <!-- admin taps the member card to open inline permission editor -->
+              </view>
       </view>
-
-      <view wx:if="{{familyMembers.length === 0}}" class="empty">
+            <!-- inline vertical permission editor shown when member is selected -->
+            <view wx:if="{{selectedMemberId === item.id && user && user.role === 'admin'}}" class="perm-panel-vertical">
+              <view class="perm-row">
+                <text class="perm-label">事务</text>
+                <switch checked="{{item.permissions && item.permissions.tasks}}" data-id="{{item.id}}" data-key="tasks" bindchange="onPermToggle"/>
+              </view>
+              <view class="perm-row">
+                <text class="perm-label">健康</text>
+                <switch checked="{{item.permissions && item.permissions.health}}" data-id="{{item.id}}" data-key="health" bindchange="onPermToggle"/>
+              </view>
+              <view class="perm-row">
+                <text class="perm-label">财务</text>
+                <switch checked="{{item.permissions && item.permissions.finance}}" data-id="{{item.id}}" data-key="finance" bindchange="onPermToggle"/>
+              </view>
+            </view>
+          </block>
+        </block>
+        <view wx:if="{{familyLoaded && familyMembers.length === 0}}" class="empty">
         <text>暂无家庭成员</text>
+        </view>
       </view>
     </view>
   </view>
@@ -43,6 +74,8 @@
           <input class="input" placeholder="请输入成员邮箱" value="{{memberEmail}}" bindinput="onMemberEmail" />
         </view>
       </view>
+
+  <!-- inline editor used instead of modal -->
 
       <view class="input-group">
         <text class="label">密码</text>
@@ -72,4 +105,5 @@
       <text class="menu-arrow">></text>
     </view>
   </view>
+  <custom-tabbar/>
 </view>
