@@ -427,7 +427,7 @@
   position: fixed;
   left: 12px;
   right: 12px;
-  bottom: 24px;
+  bottom: 64px;
   background: #fff;
   border-radius: 20px;
   padding: 20px;
