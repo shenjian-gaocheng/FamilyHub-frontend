@@ -240,8 +240,9 @@ Page({
       success: (res) => {
         if (res.data.code === 200) {
           const tasks = res.data.data.filter(task => {
-            const taskDate = task.beginTime.split('T')[0]
-            return taskDate === date
+            const startDate = task.beginTime.split('T')[0]
+            const endDate = task.endTime.split('T')[0]
+            return date >= startDate && date <= endDate
           })
           this.setData({ dayTasks: tasks, showTaskList: true })
         }

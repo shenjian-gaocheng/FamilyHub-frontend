@@ -3,6 +3,8 @@
   background: linear-gradient(180deg, #e8f4fd 0%, #f5f7fa 30%);
   display: flex;
   flex-direction: column;
+  padding-bottom: calc(120rpx);
+  box-sizing: border-box;
 }
 
 /* 顶部区域 */
