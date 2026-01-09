@@ -24,11 +24,17 @@ Page({
       wx.showToast({ title: '请先选择文件', icon: 'none' })
       return
     }
+    const user = wx.getStorageSync('user')
+    const uid = user.id   // ⭐ uid 从缓存里拿
+
     this.setData({ uploading: true, result: '' })
     wx.uploadFile({
       url: 'http://192.144.228.237:8080/api/finance/import/upload',
       filePath: path,
       name: 'file',
+      formData: {
+        uid: uid        // ⭐ 关键：通过 formData 传
+      },
       success: (res) => {
         try {
           const data = JSON.parse(res.data)
