@@ -1,6 +1,14 @@
 <view class="page">
   <view class="hero">
     <text class="title">财务管理</text>
+    <block wx:if="{{isAdmin}}">
+      <picker mode="selector" range="{{memberNames}}" value="{{memberIndex}}" bindchange="onMemberPick">
+        <view class="member-picker">{{selectedMemberLabel}}</view>
+      </picker>
+    </block>
+    <block wx:else>
+      <view class="member-picker">{{selectedMemberLabel}}</view>
+    </block>
   </view>
 
   <view class="section summary">

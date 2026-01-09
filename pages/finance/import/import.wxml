@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="form">
+    <view class="title">导入订单</view>
+
+    <view class="input-group">
+      <text class="label">选择文件上传 (JSON/CSV)</text>
+      <view class="actions">
+        <button class="btn" bindtap="chooseFile">选择文件</button>
+        <text class="file-name">{{fileName}}</text>
+        <button class="btn" bindtap="uploadFile" loading="{{uploading}}">上传并导入</button>
+      </view>
+    </view>
+
+    <view wx:if="{{result}}" class="result">
+      <text class="result-title">导入结果</text>
+      <text class="result-body">{{result}}</text>
+    </view>
+  </view>
+</view>
+

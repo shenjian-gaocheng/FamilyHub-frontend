@@ -178,4 +178,21 @@
   background: #1a73e8;
   color: #fff;
   border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.member-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e6eefc;
+  color: #1a73e8;
+  font-weight: 600;
+  font-size: 13px;
+  box-shadow: 0 6px 18px rgba(26,115,232,0.06);
 }

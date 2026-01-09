@@ -4,10 +4,13 @@
 }
 
 .hero {
-  padding: 20px 16px 12px;
-  background: linear-gradient(180deg, #e3f1ff 0%, #f7f8fa 90%);
+  padding: 18px 16px 12px;
+  background: linear-gradient(180deg, #eaf6ff 0%, #f7f8fa 90%);
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .title {
@@ -95,6 +98,29 @@
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 8px;
+}
+
+.member-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e1e8f8;
+  box-shadow: 0 4px 12px rgba(26,115,232,0.06);
+  color: #1a73e8;
+  font-weight: 600;
+  font-size: 13px;
+  min-width: 88px;
+  justify-content: center;
+}
+
+.member-picker::after {
+  content: "▾";
+  margin-left: 6px;
+  color: #1a73e8;
+  font-size: 12px;
 }
 
 .recent-item {

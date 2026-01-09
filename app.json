@@ -10,6 +10,7 @@
     "pages/health/report/report",
     "pages/health/stats/stats",
     "pages/finance/finance",
+    "pages/finance/import/import",
     "pages/finance/bills/bills",
     "pages/finance/add/add",
     "pages/finance/budget/budget",

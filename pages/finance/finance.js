@@ -9,7 +9,13 @@ Page({
       budgetLeft: formatCurrency(0),
       month: ''
     }
-    , recent: []
+    , recent: [],
+    members: [],
+    memberNames: [],
+    memberIndex: 0,
+    selectedMemberLabel: '家庭总和',
+    selectedMemberId: 'family',
+    isAdmin: false
   },
 
   onLoad() {
@@ -23,13 +29,89 @@ Page({
       return
     }
     this.setData({ user })
+    // set admin flag
+    const adminFlag = user && user.role === 'admin'
+    this.setData({ isAdmin: adminFlag })
     const { begin, end, monthKey } = this.getMonthRange()
     this.setData({ 'summary.month': monthKey })
-    this.fetchSummary(user.id, begin, end)
-    this.fetchBudget(user.id, monthKey)
-    this.fetchRecent(user.id)
-    this.fetchTrend(user.id)
+    // apply selected member from global storage if present (do this BEFORE loading members to avoid overwriting)
+    const sel = wx.getStorageSync('finance_selected_member') || { id: 'family', name: '家庭总和' }
+    this.setData({ selectedMemberId: sel.id, selectedMemberLabel: sel.name || '家庭总和' })
+    this.loadFamilyMembers()
+    const scope = (sel.id === 'family') ? 'family' : 'self'
+    const userId = (sel.id === 'family') ? user.id : sel.id
+    this.fetchSummary(userId, begin, end, scope)
+    this.fetchBudget(userId, monthKey)
+    this.fetchRecent(userId, scope)
+    this.fetchTrend(userId, scope)
     // TabBar refresh centralized; removed per-page refresh to avoid conflicts.
+  },
+
+  loadFamilyMembers() {
+    const user = wx.getStorageSync('user')
+    if (!user || !user.familyId) return
+    const that = this
+    wx.request({
+      url: 'http://localhost:8080/api/family/members',
+      method: 'GET',
+      data: { familyId: user.familyId },
+      success: (res) => {
+        if (Array.isArray(res.data)) {
+          const members = res.data.map(m => ({ id: m.id, name: m.name || m.email || ('用户' + m.id) }))
+          const list = [{ id: 'family', name: '家庭总和' }].concat(members)
+          // preserve existing selection from storage if present to avoid UI flicker
+          const stored = wx.getStorageSync('finance_selected_member') || null
+          let memberIndex = 0
+          if (stored && stored.id) {
+            const idx = list.findIndex(x => String(x.id) === String(stored.id))
+            if (idx >= 0) memberIndex = idx
+          }
+          const selected = list[memberIndex]
+          that.setData({
+            members: list,
+            memberNames: list.map(x => x.name),
+            memberIndex: memberIndex,
+            selectedMemberLabel: selected.name,
+            selectedMemberId: selected.id
+          })
+          // ensure storage exists
+          if (!stored) wx.setStorageSync('finance_selected_member', { id: list[0].id, name: list[0].name })
+        }
+      },
+      fail: () => {}
+    })
+  },
+
+  onMemberPick(e) {
+    const idx = Number(e.detail.value || 0)
+    const list = this.data.members || []
+          const sel = list[idx] || { id: 'family', name: '家庭总和' }
+    if (!this.data.isAdmin) {
+      wx.showToast({ title: '仅家庭管理员可切换成员', icon: 'none' })
+      return
+    }
+    this.setData({ memberIndex: idx, selectedMemberLabel: sel.name, selectedMemberId: sel.id }, () => {
+      // persist selection for other pages
+      wx.setStorageSync('finance_selected_member', { id: sel.id, name: sel.name })
+      const { begin, end, monthKey } = this.getMonthRange()
+      const user = this.data.user
+      const scope = (sel.id === 'family') ? 'family' : 'self'
+      const userId = (sel.id === 'family') ? user.id : sel.id
+      this.fetchSummary(userId, begin, end, scope)
+      this.fetchBudget(userId, monthKey)
+      this.fetchRecent(userId, scope)
+      this.fetchTrend(userId, scope)
+    })
+      // notify other open pages to refresh their data immediately (avoid stale cache)
+      const pages = getCurrentPages ? getCurrentPages() : []
+      pages.forEach(p => {
+        try {
+          if (!p || !p.route) return
+          if (p.route === 'pages/finance/bills/bills' || p.route === 'pages/finance/budget/budget' || p.route === 'pages/finance/finance') {
+            if (typeof p.onShow === 'function') p.onShow()
+          }
+        } catch (e) {}
+      })
   },
 
   getMonthRange() {
@@ -42,11 +124,12 @@ Page({
     return { begin, end, monthKey }
   },
 
-  fetchSummary(userId, begin, end) {
+  fetchSummary(userId, begin, end, scope) {
+    const s = scope || 'family'
     wx.request({
       url: 'http://localhost:8080/api/finance/summary',
       method: 'GET',
-      data: { userId, begin, end, scope: 'family' },
+      data: { userId, begin, end, scope: s },
       success: (res) => {
         if (res.data) {
           const d = res.data
@@ -113,7 +196,7 @@ Page({
     }, Math.round(1000 / frameRate))
   },
 
-  fetchRecent(userId) {
+  fetchRecent(userId, scope) {
     const now = new Date()
     const end = now.toISOString()
     const beginDate = new Date(now.getTime() - 6 * 24 * 3600 * 1000)
@@ -121,7 +204,7 @@ Page({
     wx.request({
       url: 'http://localhost:8080/api/finance/bills',
       method: 'GET',
-      data: { userId, begin, end, scope: 'family' },
+      data: { userId, begin, end, scope: scope || 'family' },
       success: (res) => {
         if (!Array.isArray(res.data)) { this.setData({ recent: [] }); return }
         const list = []
@@ -146,7 +229,7 @@ Page({
     })
   }
   ,
-  fetchTrend(userId) {
+  fetchTrend(userId, scope) {
     const now = new Date()
     const end = now.toISOString()
     const beginDate = new Date(now.getTime() - 29 * 24 * 3600 * 1000)
@@ -154,7 +237,7 @@ Page({
     wx.request({
       url: 'http://localhost:8080/api/finance/trend',
       method: 'GET',
-      data: { userId, begin, end, scope: 'family', interval: 'daily' },
+      data: { userId, begin, end, scope: scope || 'family', interval: 'daily' },
       success: (res) => {
         if (!res.data || !Array.isArray(res.data.trend)) {
           this.drawTrend([], [])

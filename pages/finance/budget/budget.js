@@ -10,7 +10,10 @@ Page({
     spentFmt: '0',
     leftFmt: '0',
     percent: 0,
-    categories: []
+    categories: [],
+    selectedMemberId: 'family',
+    selectedMemberLabel: '家庭总和',
+    isEditable: true
   },
   // color palette for categories
   colorPalette: ['#1a73e8', '#f5b400', '#e54d42', '#0cb34a', '#9b59b6', '#34495e', '#e67e22'],
@@ -21,6 +24,10 @@ Page({
       return
     }
     this.setData({ user })
+    // read selection from finance main page
+    const sel = wx.getStorageSync('finance_selected_member') || { id: 'family', name: '家庭总和' }
+    const isEditable = (sel.id === 'family' || sel.id === user.id)
+    this.setData({ selectedMemberId: sel.id, selectedMemberLabel: sel.name || '家庭总和', isEditable })
     this.loadBudget()
     // fetch available categories
     const { DEFAULT_CATEGORIES } = require('../../../utils/util')
@@ -47,10 +54,12 @@ Page({
     const user = this.data.user
     if (!user) return
     const month = this.getMonthKey()
+    const sel = this.data.selectedMemberId
+    const userId = (sel === 'family') ? user.id : sel
     wx.request({
       url: 'http://localhost:8080/api/finance/budgets',
       method: 'GET',
-      data: { userId: user.id, month },
+      data: { userId, month },
       success: (res) => {
     if (res.data) {
           // expected: { month, budget, spent, categories: [{name, budget, spent}] }
@@ -88,7 +97,8 @@ Page({
           })
             // compute spent per category from bills and update categories' spent
           const { begin, end } = this.getMonthRangeForKey(month)
-          this.fetchBillsAndComputeCategorySpent(user.id, begin, end).then(spentByCat => {
+          const billUserId = (this.data.selectedMemberId === 'family') ? user.id : this.data.selectedMemberId
+          this.fetchBillsAndComputeCategorySpent(billUserId, begin, end).then(spentByCat => {
             const updated = (this.data.categories || []).map(c => {
               const s = spentByCat[c.name] || 0
               c.spent = s
@@ -115,6 +125,7 @@ Page({
       }
     })
   },
+ 
 
   getMonthRangeForKey(monthKey) {
     const [y, m] = (monthKey || this.getMonthKey()).split('-')
@@ -157,6 +168,8 @@ Page({
       percent: total > 0 ? Math.min(100, Math.round((this.data.spent / total) * 100)) : 0,
       mismatch: false
     })
+    // schedule automatic save after categories change
+    this.scheduleSaveBudget()
   },
 
   distributeTotalToCategories() {
@@ -207,12 +220,10 @@ Page({
     })
   },
   onSave() {
-    if (this.data.budget < 0) {
-      wx.showToast({ title: '预算不能为负', icon: 'none' })
-      return
-    }
+    // kept for compatibility but UI no longer exposes a save button.
     const user = this.data.user
     const month = this.getMonthKey()
+    if (!user) return
     wx.request({
       url: 'http://localhost:8080/api/finance/budgets',
       method: 'POST',
@@ -220,10 +231,10 @@ Page({
         userId: user.id,
         month,
         budget: this.data.budget,
-        categories: this.data.categories
+        categories: (this.data.categories || []).map(c => ({ name: c.name, budget: Number(c.budget || 0) }))
       },
       success: (res) => {
-        wx.showToast({ title: '预算已保存', icon: 'success' })
+        wx.showToast({ title: '预算已保存', icon: 'success', duration: 800 })
       },
       fail: () => {
         wx.showToast({ title: '保存失败', icon: 'none' })
@@ -232,25 +243,32 @@ Page({
   }
   ,
   addCategory() {
+    if (!this.data.isEditable) return
     const cats = this.data.categories || []
     cats.push({ name: '', budget: 0, budgetFmt: '0', spent: 0, spentFmt: '0', percent: 0 })
     this.setData({ categories: cats })
+    this.syncCategoriesToTotal()
   },
   removeCategory(e) {
+    if (!this.data.isEditable) return
     const idx = e.currentTarget.dataset.idx
     const cats = this.data.categories || []
     cats.splice(idx, 1)
     this.setData({ categories: cats })
+    this.syncCategoriesToTotal()
   },
   onCategoryNameInput(e) {
+    if (!this.data.isEditable) return
     const idx = e.currentTarget.dataset.idx
     const val = e.detail.value
     const cats = this.data.categories || []
     if (!cats[idx]) return
     cats[idx].name = val
     this.setData({ categories: cats })
+    this.scheduleSaveBudget()
   },
   onCategoryBudgetInput(e) {
+    if (!this.data.isEditable) return
     const idx = e.currentTarget.dataset.idx
     const val = Number(e.detail.value) || 0
     const cats = this.data.categories || []
@@ -259,9 +277,11 @@ Page({
     cats[idx].budgetFmt = formatCurrency(val)
     cats[idx].percent = val > 0 ? Math.min(100, Math.round((cats[idx].spent / val) * 100)) : 0
     this.setData({ categories: cats })
+    this.syncCategoriesToTotal()
   }
   ,
   onCategoryPick(e) {
+    if (!this.data.isEditable) return
     const idx = e.currentTarget.dataset.idx
     const val = e.detail.value
     const cats = this.data.categories || []
@@ -269,5 +289,16 @@ Page({
     if (!cats[idx]) return
     cats[idx].name = list[val] || cats[idx].name
     this.setData({ categories: cats })
+    this.scheduleSaveBudget()
+  }
+,
+  // debounce helpers for auto-saving budget changes
+  saveTimeout: null,
+  scheduleSaveBudget() {
+    if (this.saveTimeout) clearTimeout(this.saveTimeout)
+    this.saveTimeout = setTimeout(() => {
+      this.saveTimeout = null
+      this.onSave()
+    }, 700)
   }
 })

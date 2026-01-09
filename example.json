@@ -1,0 +1,56 @@
+[
+    {
+      "userId": 24,
+      "type": "支出",
+      "content": "早餐",
+      "category": "餐饮",
+      "price": 12.50,
+      "time": "2026-01-08T08:05:00"
+    },
+    {
+      "userId": 24,
+      "type": "支出",
+      "items": [
+        {
+          "content": "午餐",
+          "category": "餐饮",
+          "price": 20.00,
+          "time": "2026-01-08T12:00:00"
+        },
+        {
+          "content": "咖啡",
+          "category": "餐饮",
+          "price": 8.00,
+          "time": "2026-01-08T15:30:00"
+        }
+      ]
+    },
+    {
+      "userId": 25,
+      "type": "收入",
+      "content": "工资",
+      "category": "工资",
+      "price": 3000.00,
+      "time": "2026-01-01T00:00:00"
+    },
+    {
+      "userId": 24,
+      "type": "支出",
+      "content": "地铁",
+      "category": "交通",
+      "price": 3.00,
+      "time": "2026-01-09T09:00:00"
+    },
+    {
+      "userId": 26,
+      "type": "支出",
+      "items": [
+        {
+          "content": "超市购物",
+          "category": "日用",
+          "price": 150.75,
+          "time": "2026-01-10T18:20:00"
+        }
+      ]
+    }
+  ]
