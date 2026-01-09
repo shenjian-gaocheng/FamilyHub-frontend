@@ -52,7 +52,7 @@ Page({
     const scope = (sel === 'family') ? 'family' : 'self'
     const userId = (sel === 'family') ? user.id : sel
     wx.request({
-      url: 'http://localhost:8080/api/finance/summary',
+      url: 'http://192.144.228.237:8080/api/finance/summary',
       method: 'GET',
       data: { userId, begin, end, scope },
       success: (res) => {
@@ -82,7 +82,7 @@ Page({
     const scope = (sel === 'family') ? 'family' : 'self'
     const userId = (sel === 'family') ? user.id : sel
     wx.request({
-      url: 'http://localhost:8080/api/finance/bills',
+      url: 'http://192.144.228.237:8080/api/finance/bills',
       method: 'GET',
       data: { userId, begin, end, scope },
       success: (res) => {
@@ -160,7 +160,7 @@ Page({
     const sel = this.data.selectedMemberId || 'family'
     const scope = (sel === 'family') ? 'family' : 'self'
     const userId = (sel === 'family') ? user.id : sel
-    const url = `http://localhost:8080/api/finance/bills/export?userId=${encodeURIComponent(userId)}&begin=${encodeURIComponent(begin)}&end=${encodeURIComponent(end)}&scope=${encodeURIComponent(scope)}`
+    const url = `http://192.144.228.237:8080/api/finance/bills/export?userId=${encodeURIComponent(userId)}&begin=${encodeURIComponent(begin)}&end=${encodeURIComponent(end)}&scope=${encodeURIComponent(scope)}`
     wx.showLoading({ title: '导出中...' })
     // Use arraybuffer request so we can write a file with the correct .xlsx suffix
     wx.request({
@@ -245,7 +245,7 @@ Page({
     const detail = this.data.detail
     if (!detail || !detail.id) return
     wx.request({
-      url: `http://localhost:8080/api/finance/bills/${detail.id}`,
+      url: `http://192.144.228.237:8080/api/finance/bills/${detail.id}`,
       method: 'DELETE',
       success: (res) => {
         if (res.data && res.data.ok) {

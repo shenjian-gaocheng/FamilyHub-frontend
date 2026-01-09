@@ -16,7 +16,7 @@ Page({
       this.setData({ editMode: true, billId, itemId })
       const that = this
       wx.request({
-        url: `http://localhost:8080/api/finance/bills/${billId}`,
+        url: `http://192.144.228.237:8080/api/finance/bills/${billId}`,
         method: 'GET',
         success: (res) => {
           if (res.data && res.data.bill) {
@@ -49,7 +49,7 @@ Page({
   fetchCategories() {
     const { DEFAULT_CATEGORIES } = require('../../../utils/util')
     wx.request({
-      url: 'http://localhost:8080/api/finance/category-list',
+      url: 'http://192.144.228.237:8080/api/finance/category-list',
       method: 'GET',
       success: (res) => {
         if (res.data && Array.isArray(res.data.categories)) {
@@ -122,7 +122,7 @@ Page({
         items: [item]
       }
       wx.request({
-        url: 'http://localhost:8080/api/finance/bills',
+        url: 'http://192.144.228.237:8080/api/finance/bills',
         method: 'POST',
         data: payload,
         success: (res) => {
@@ -173,7 +173,7 @@ Page({
       items: itemsPayload
     }
     wx.request({
-      url: `http://localhost:8080/api/finance/bills/${billId}`,
+      url: `http://192.144.228.237:8080/api/finance/bills/${billId}`,
       method: 'PUT',
       data: payload,
       success: (res) => {

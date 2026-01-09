@@ -42,7 +42,7 @@ Page({
     wx.showLoading({ title: '创建中...' })
 
     wx.request({
-      url: 'http://localhost:8080/api/user/register',
+      url: 'http://192.144.228.237:8080/api/user/register',
       method: 'POST',
       data: {
         email: email,
@@ -68,7 +68,7 @@ Page({
 
   createFamilyForUser(user) {
     wx.request({
-      url: 'http://localhost:8080/api/family/create',
+      url: 'http://192.144.228.237:8080/api/family/create',
       method: 'POST',
       header: {
         'Content-Type': 'application/json'

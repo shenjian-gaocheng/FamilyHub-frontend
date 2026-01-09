@@ -26,7 +26,7 @@ Page({
     }
     this.setData({ uploading: true, result: '' })
     wx.uploadFile({
-      url: 'http://localhost:8080/api/finance/import/upload',
+      url: 'http://192.144.228.237:8080/api/finance/import/upload',
       filePath: path,
       name: 'file',
       success: (res) => {

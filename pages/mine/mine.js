@@ -43,8 +43,8 @@ Page({
         })
       }
 
-      const primaryUrl = `http://localhost:8080/api/family/getmembers?userId=${user.id}`
-      const fallbackUrl = `http://localhost:8080/api/family/members?familyId=${user.familyId}`
+      const primaryUrl = `http://192.144.228.237:8080/api/family/getmembers?userId=${user.id}`
+      const fallbackUrl = `http://192.144.228.237:8080/api/family/members?familyId=${user.familyId}`
 
       tryGetMembers(primaryUrl).then(res => {
       if (Array.isArray(res.data)) {
@@ -157,7 +157,7 @@ Page({
     wx.showLoading({ title: '添加中...' })
 
     wx.request({
-      url: 'http://localhost:8080/api/family/add-member',
+      url: 'http://192.144.228.237:8080/api/family/add-member',
       method: 'POST',
       header: {
         'Content-Type': 'application/json'
@@ -207,7 +207,7 @@ Page({
     const payload = { adminId: admin.id, userId: Number(userId) }
     payload[fieldMap[key]] = checked ? 1 : 0
     wx.request({
-      url: 'http://localhost:8080/api/permissions',
+      url: 'http://192.144.228.237:8080/api/permissions',
       method: 'POST',
       header: { 'Content-Type': 'application/json' },
       data: payload,
@@ -215,7 +215,7 @@ Page({
         if (res.data && res.data.ok) {
           // re-fetch the saved user's permissions from backend to ensure UI matches DB
           wx.request({
-            url: `http://localhost:8080/api/permissions?userId=${userId}`,
+            url: `http://192.144.228.237:8080/api/permissions?userId=${userId}`,
             method: 'GET',
             success: (pr) => {
               if (pr.data) {
@@ -276,7 +276,7 @@ Page({
       const idx = members.findIndex(m => m.id === Number(id))
       // fetch latest permissions for this user
       wx.request({
-        url: `http://localhost:8080/api/permissions?userId=${id}`,
+        url: `http://192.144.228.237:8080/api/permissions?userId=${id}`,
         method: 'GET',
         success: (res) => {
           if (res.data) {
@@ -334,7 +334,7 @@ Page({
     const end = `${year}-${month}-31T23:59:59`
     const { formatCurrency } = require('../../utils/util')
     wx.request({
-      url: 'http://localhost:8080/api/finance/summary',
+      url: 'http://192.144.228.237:8080/api/finance/summary',
       method: 'GET',
       data: { userId: user.id, begin, end, scope: 'family' },
       success: (res) => {

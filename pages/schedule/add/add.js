@@ -1,6 +1,6 @@
 // pages/schedule/add/add.js
 const app = getApp() 
-const API_BASE = 'http://localhost:8080/api'
+const API_BASE = 'http://192.144.228.237:8080/api'
 
 Page({
   data: {

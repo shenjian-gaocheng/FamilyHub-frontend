@@ -23,7 +23,7 @@ Page({
     const userId = user.id
 
     wx.request({
-      url: 'http://localhost:8080/api/statistics/latest-rating',
+      url: 'http://192.144.228.237:8080/api/statistics/latest-rating',
       method: 'GET',
       data: { userId },
       success: (res) => {

@@ -31,7 +31,7 @@ Page({
     const userId = user.id
 
     wx.request({
-      url: 'http://localhost:8080/api/health/record',
+      url: 'http://192.144.228.237:8080/api/health/record',
       data: { userId },
       success: (res) => {
         this.setData({ records: res.data });
@@ -63,7 +63,7 @@ Page({
 
     requests.forEach(record => {
       wx.request({
-        url: `http://localhost:8080/api/health/record?userId=${userId}`,
+        url: `http://192.144.228.237:8080/api/health/record?userId=${userId}`,
         method: 'POST',
         header: { 'content-type': 'application/json' },
         data: record

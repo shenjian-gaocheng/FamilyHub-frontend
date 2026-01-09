@@ -29,7 +29,7 @@ Page({
     }
 
     wx.request({
-      url: 'http://localhost:8080/api/user/login',
+      url: 'http://192.144.228.237:8080/api/user/login',
       method: 'POST',
       data: {
         email: email,

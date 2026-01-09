@@ -48,7 +48,7 @@ Page({
     const userId = (sel === 'family') ? user.id : sel
     const selScope = (this.data.selectedMemberId === 'family') ? 'family' : 'self'
     wx.request({
-      url: 'http://localhost:8080/api/finance/budgets',
+      url: 'http://192.144.228.237:8080/api/finance/budgets',
       method: 'GET',
       data: { userId, month, scope: selScope },
       success: (res) => {
@@ -117,7 +117,7 @@ Page({
     const that = this
     const doSave = (attemptsLeft) => {
       wx.request({
-        url: 'http://localhost:8080/api/finance/budgets',
+        url: 'http://192.144.228.237:8080/api/finance/budgets',
         method: 'POST',
         data: payload,
         success: (res) => {

@@ -57,7 +57,7 @@ Page({
     if (!user || !user.familyId) return
     const that = this
     wx.request({
-      url: 'http://localhost:8080/api/family/members',
+      url: 'http://192.144.228.237:8080/api/family/members',
       method: 'GET',
       data: { familyId: user.familyId },
       success: (res) => {
@@ -132,7 +132,7 @@ Page({
   fetchSummary(userId, begin, end, scope) {
     const s = scope || 'family'
     wx.request({
-      url: 'http://localhost:8080/api/finance/summary',
+      url: 'http://192.144.228.237:8080/api/finance/summary',
       method: 'GET',
       data: { userId, begin, end, scope: s },
       success: (res) => {
@@ -151,7 +151,7 @@ Page({
 
   fetchBudget(userId, month) {
     wx.request({
-      url: 'http://localhost:8080/api/finance/budgets',
+      url: 'http://192.144.228.237:8080/api/finance/budgets',
       method: 'GET',
       data: { userId, month },
       success: (res) => {
@@ -207,7 +207,7 @@ Page({
     const beginDate = new Date(now.getTime() - 6 * 24 * 3600 * 1000)
     const begin = beginDate.toISOString()
     wx.request({
-      url: 'http://localhost:8080/api/finance/bills',
+      url: 'http://192.144.228.237:8080/api/finance/bills',
       method: 'GET',
       data: { userId, begin, end, scope: scope || 'family' },
       success: (res) => {
@@ -240,7 +240,7 @@ Page({
     const beginDate = new Date(now.getTime() - 29 * 24 * 3600 * 1000)
     const begin = beginDate.toISOString()
     wx.request({
-      url: 'http://localhost:8080/api/finance/trend',
+      url: 'http://192.144.228.237:8080/api/finance/trend',
       method: 'GET',
       data: { userId, begin, end, scope: scope || 'family', interval: 'daily' },
       success: (res) => {

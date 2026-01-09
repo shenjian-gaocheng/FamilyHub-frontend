@@ -50,9 +50,9 @@
   </view>
 
   <view class="form-item">
-    <text class="label">星期</text>
-    <picker range="{{weekOptions}}" value="{{weekIndex}}" bindchange="onWeekChange">
-      <view class="picker">{{weekOptions[weekIndex]}}</view>
+    <text class="label">日期</text>
+    <picker mode="date" bindchange="onDateChange">
+      <view class="picker">{{date || '请选择日期'}}</view>
     </picker>
   </view>
 
@@ -70,14 +70,9 @@
     </picker>
   </view>
 
-  <view class="form-item">
-    <text class="label">持续周数</text>
-    <input class="input" type="number" placeholder="如：4" bindinput="onWeeksInput"/>
-  </view>
-
   <view class="modal-actions">
     <button class="ghost" bindtap="onCancel">取消</button>
-    <button class="primary" bindtap="onSubmit">生成</button>
+    <button class="primary" bindtap="onSubmit">添加</button>
   </view>
 </view>
 
