@@ -1,5 +1,5 @@
 // pages/schedule/statistics/statistics.js
-const API_BASE = 'http://localhost:8080/api'
+const API_BASE = 'http://192.144.228.237:8080/api'
 
 Page({
   data: {
