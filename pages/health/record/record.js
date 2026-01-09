@@ -42,36 +42,48 @@ Page({
   onSubmit() {
     const user = wx.getStorageSync('user')
     const userId = user.id
-
-    const now = new Date().toISOString();
-
-    const requests = [];
-
+  
+    const now = new Date().toISOString()
+  
+    const records = []
+  
     if (this.data.dietText) {
-      requests.push({
+      records.push({
         type: 'DIET',
         content: this.data.dietText,
         date: now
-      });
+      })
     }
-
-    requests.push({
+  
+    records.push({
       type: 'SLEEP',
       content: `${this.data.sleepHours}`,
       date: now
-    });
-
-    requests.forEach(record => {
-      wx.request({
-        url: `http://192.144.228.237:8080/api/health/record?userId=${userId}`,
-        method: 'POST',
-        header: { 'content-type': 'application/json' },
-        data: record
-      });
-    });
-
-    wx.showToast({ title: '记录成功', icon: 'success' });
-    this.setData({ dietText: '' });
-    this.loadRecords();
-  }
+    })
+  
+    // ⭐ 把请求封装成 Promise
+    const promises = records.map(record => {
+      return new Promise((resolve, reject) => {
+        wx.request({
+          url: `http://192.144.228.237:8080/api/health/record?userId=${userId}`,
+          method: 'POST',
+          header: { 'content-type': 'application/json' },
+          data: record,
+          success: () => resolve(),
+          fail: err => reject(err)
+        })
+      })
+    })
+  
+    // ⭐ 所有请求完成后再刷新
+    Promise.all(promises)
+      .then(() => {
+        wx.showToast({ title: '记录成功', icon: 'success' })
+        this.setData({ dietText: '' })
+        this.loadRecords()   // ✅ 这里再刷新
+      })
+      .catch(() => {
+        wx.showToast({ title: '记录失败', icon: 'none' })
+      })
+  }  
 });

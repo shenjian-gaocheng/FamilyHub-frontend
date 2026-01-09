@@ -11,11 +11,12 @@ Page({
   },
 
   onReady() {
-    this.loadLatestRating()
+    
   },
 
   onShow() {
     // TabBar refresh centralized; removed per-page refresh to avoid conflicts.
+    this.loadLatestRating()
   },
 
   loadLatestRating() {
