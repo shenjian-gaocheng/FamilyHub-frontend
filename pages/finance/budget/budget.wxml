@@ -2,17 +2,19 @@
   <view class="section">
     <view class="section-header">
       <text class="title">月度预算 {{month}}</text>
+      <button class="primary" bindtap="onSave" wx:if="{{isEditable}}">保存</button>
     </view>
     <view class="row">
       <view class="col">
-        <text class="label">预算</text>
-        <text class="value">￥{{budgetFmt}}</text>
+        <text class="label">总预算</text>
+        <input class="input" type="number" value="{{budget}}" bindinput="onBudgetInput" wx:if="{{isEditable}}" />
+        <text class="value" wx:if="{{!isEditable}}">￥{{budgetFmt}}</text>
         <text class="small-note">总预算</text>
       </view>
       <view class="col">
         <text class="label">已用</text>
         <text class="value red">￥{{spentFmt}}</text>
-        <text class="small-note">本月累计</text>
+        <text class="small-note">本月支出累计</text>
       </view>
       <view class="col">
         <text class="label">剩余</text>
@@ -24,39 +26,9 @@
       <view class="bar {{percent > 100 ? 'over' : ''}}" style="width: {{percent}}%"></view>
     </view>
     <text class="note">已用 {{percent}}% </text>
-    <view class="warning-row" wx:if="{{mismatch}}">
-      <text class="warning-text">注意：分项预算合计 ¥{{categoriesTotalFmt}} 与总预算 ¥{{budgetFmt}} 不一致</text>
-      <button class="ghost" bindtap="syncCategoriesToTotal">将分项合计设为总预算</button>
-      <button class="ghost" bindtap="distributeTotalToCategories">按比例分配总预算到分项</button>
-    </view>
   </view>
 
   <view class="section">
-    <text class="title">分项预算</text>
-    <block wx:for="{{categories}}" wx:key="index">
-      <view class="card">
-        <view class="card-top">
-          <block wx:if="{{isEditable}}">
-            <picker mode="selector" range="{{availableCategories}}" value="{{0}}" data-idx="{{index}}" bindchange="onCategoryPick">
-              <view class="badge" style="background-color: {{item.color}}">{{item.name || '选择分类'}}</view>
-            </picker>
-            <input class="input small" value="{{item.budget}}" data-idx="{{index}}" bindinput="onCategoryBudgetInput" type="number" placeholder="预算"/>
-            <button size="mini" data-idx="{{index}}" bindtap="removeCategory">删除</button>
-          </block>
-          <block wx:else>
-            <view class="badge" style="background-color: {{item.color}}">{{item.name || '—'}}</view>
-            <input class="input small" value="{{item.budget}}" disabled="true" type="number" />
-          </block>
-        </view>
-        <view class="card-top meta">
-          <text class="card-amount">￥{{item.spentFmt || '0'}} / ￥{{item.budgetFmt || '0'}}</text>
-          <text class="card-percent">{{item.percent || 0}}%</text>
-        </view>
-        <view class="progress mini">
-          <view class="bar {{(item.spent || 0) > (item.budget || 0) ? 'over' : ''}}" style="width: {{getBarWidth(item.spent || 0, item.budget || 0)}}%"></view>
-        </view>
-      </view>
-    </block>
-    <button wx:if="{{isEditable}}" bindtap="addCategory">添加分类预算</button>
+    <!-- 分项预算已移除；仅保留总预算 -->
   </view>
 </view>

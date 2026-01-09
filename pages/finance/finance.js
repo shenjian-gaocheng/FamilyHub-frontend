@@ -36,8 +36,13 @@ Page({
     this.setData({ 'summary.month': monthKey })
     // apply selected member from global storage if present (do this BEFORE loading members to avoid overwriting)
     const sel = wx.getStorageSync('finance_selected_member') || { id: 'family', name: '家庭总和' }
-    this.setData({ selectedMemberId: sel.id, selectedMemberLabel: sel.name || '家庭总和' })
-    this.loadFamilyMembers()
+    // Non-admins should not be able to switch selector — show their own info only and do not load members
+    if (adminFlag) {
+      this.setData({ selectedMemberId: sel.id, selectedMemberLabel: sel.name || '家庭总和' })
+      this.loadFamilyMembers()
+    } else {
+      this.setData({ selectedMemberId: user.id, selectedMemberLabel: user.name || user.email || ('用户' + user.id) })
+    }
     const scope = (sel.id === 'family') ? 'family' : 'self'
     const userId = (sel.id === 'family') ? user.id : sel.id
     this.fetchSummary(userId, begin, end, scope)
@@ -136,8 +141,8 @@ Page({
           // animate numbers
           this.animateNumber('summary.out', d.totalOut || 0)
           this.animateNumber('summary.in', d.totalIn || 0)
-        }
-      },
+    }
+  },
       fail: () => {
         wx.showToast({ title: '获取汇总失败', icon: 'none' })
       }

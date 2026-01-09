@@ -46,7 +46,10 @@ Component({
       const currentRoute = pages.length ? ('/' + pages[pages.length - 1].route) : ''
       const tabsWithActive = tabs.map(t => {
         const url = this.data.itemUrlMap[t.key] || ''
-        return { ...t, active: (url === currentRoute || url === ('/' + currentRoute) || ('/' + url) === currentRoute) }
+        // mark active if currentRoute equals the tab url or is a sub-route of that tab (e.g., /pages/finance/budget/*)
+        const normalizedUrl = url.startsWith('/') ? url : ('/' + url)
+        const active = currentRoute === normalizedUrl || currentRoute.startsWith(normalizedUrl + '/')
+        return { ...t, active }
       })
       this.setData({ tabs: tabsWithActive })
     },
